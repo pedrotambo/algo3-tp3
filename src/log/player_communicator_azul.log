@@ -1,0 +1,460 @@
+
+/*************** Nueva partida *****************/
+columnas: 3
+filas: 3
+c: 3
+p: 24
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 3 3 3 24
+envio <type 'str'>: el
+envio <type 'int'>: 0
+recibo <type 'str'>: 2
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'str'>: empataron
+
+/*************** Nueva partida *****************/
+columnas: 3
+filas: 3
+c: 3
+p: 24
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 3 3 3 24
+envio <type 'str'>: el
+envio <type 'int'>: 0
+recibo <type 'str'>: 2
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'str'>: empataron
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 1
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 3
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'str'>: perdiste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 3
+envio <type 'int'>: 1
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 2
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 3
+recibo <type 'str'>: 1
+envio <type 'str'>: perdiste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 2
+envio <type 'int'>: 2
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 2
+envio <type 'int'>: 1
+recibo <type 'str'>: 1
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'int'>: 3
+recibo <type 'str'>: 2
+envio <type 'str'>: perdiste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 2
+envio <type 'int'>: 1
+recibo <type 'str'>: 1
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'int'>: 3
+recibo <type 'str'>: 2
+envio <type 'str'>: perdiste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: False
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: el
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 3
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'int'>: 1
+recibo <type 'str'>: 2
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 3
+recibo <type 'str'>: 1
+envio <type 'int'>: 3
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 4
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 4 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 3 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 3
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 0
+recibo <type 'str'>: 0
+envio <type 'int'>: 2
+recibo <type 'str'>: 2
+envio <type 'int'>: 3
+recibo <type 'str'>: 3
+envio <type 'int'>: 3
+recibo <type 'str'>: 3
+envio <type 'int'>: 1
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 3
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 3 60
+envio <type 'str'>: vos
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 2
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 2 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 0
+recibo <type 'str'>: 1
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 2
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 2 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'int'>: 1
+recibo <type 'str'>: 0
+envio <type 'str'>: ganaste
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 2
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 2 60
+envio <type 'str'>: vos
+recibo <type 'str'>: 0
+envio <type 'str'>: salir
+recibo <type 'str'>: listo
+
+/*************** Nueva partida *****************/
+columnas: 4
+filas: 5
+c: 4
+p: 60
+color: azul
+color del oponente: rojo
+vas primero: True
+/**********************************************/
+envio <type 'str'>: azul rojo
+envio <type 'str'>: 4 5 4 60
+envio <type 'str'>: vos
