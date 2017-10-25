@@ -3,7 +3,7 @@ CFLAGS = -c -g -Wall -std=c++11
 OBJECTS = minimax.o
 
 
-all: minimax random_player alpha-beta
+all: minimax random_player alpha-beta greedy
 
 minimax: minimax.o
 	$(CC) minimax.o -o minimax
@@ -23,6 +23,8 @@ random_player: random_player.o
 random_player.o: random_player.cpp
 	$(CC) $(CFLAGS) random_player.cpp
 
+greedy.o: greedy.cpp
+	$(CC) $(CFLAGS) greedy.cpp
 
 
 clean:
@@ -30,3 +32,4 @@ clean:
 	rm -f minimax
 	rm -f random_player
 	rm -f alpha-beta
+	rm -f greedy
