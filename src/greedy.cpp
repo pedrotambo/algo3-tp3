@@ -12,6 +12,7 @@ std::mt19937 generator(rd());
 
 const int PLAYER_1 = 1;
 const int PLAYER_2 = 2;
+const int EMPTY = 0;
 
 
 void send(const std::string& msg) {
@@ -44,6 +45,8 @@ std::string read_str() {
 
 
 
+
+
 struct Game{
     Game(int _rows, int _cols, int _c, int _p, int _current_player){
         c = _c;
@@ -66,8 +69,31 @@ struct Game{
     int current_player;
 };
 
+void do_move(Game &g, int movement) {
+    int height = g.heights[movement]++;
+    g.board[height][movement] = g.current_player;
+    g.p++;
+}
+
+void undo_move(Game &g, int movement){
+    g.heights[movement]--;
+    g.board[g.heights[movement]][movement] = EMPTY;
+    g.p--;
+}
+
+void show_board(std::vector< std::vector<int > > &board){
+
+    for(int i = (int)board.size()-1; i > -1; i--){
+        for(int j = 0; j < (int)board[i].size(); j++){
+            std::cout << board[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+
 // Devuelve un arreglo donde cada índice (i) indica la cantidad de juegos formados de tamaño i
-std::vector<int> lines_lenghts(Game g){
+std::vector<int> lines_lenghts(Game &g){
 
     std::vector<int> result(g.cols, 0);
 
@@ -75,7 +101,7 @@ std::vector<int> lines_lenghts(Game g){
         for (int i = 0; i < g.cols - 1; i++) {
             int partial_count = 1;
 
-            while (i + 1 < g.cols and g.board[j][i] == g.board[j][i+1] and g.board[i][j] == PLAYER_1) {
+            while (i + 1 < g.cols and g.board[j][i] == g.board[j][i+1] and g.board[j][i] == PLAYER_1) {
                 partial_count++;
                 i++;
             }
@@ -97,17 +123,36 @@ std::vector<int> lines_lenghts(Game g){
         }
     }
 
-    for (int i = 0; i < result.size(); i++) {
+    /*for (int i = 0; i < (int)result.size(); i++) {
         std::cerr << "i: " << i << " #: " << result[i] << std::endl;
-    }
+    }*/
 
+    result[0] = 0;
+    result[1] = 0;
     return result;
 }
 
+void show_lines(Game &g){
+	std::vector<int> result = lines_lenghts(g);
+
+	for (int i = 2; i < (int)result.size(); i++) {
+        std::cerr << "i: " << i << " #: " << result[i] << std::endl;
+    }
+
+}
+
 // Indica que tan buena es el movimiento pasado como parámetro
-int calculate_move_score(Game g, int move) {
-    lines_lenghts(g);
-    return 0;
+int calculate_move_score(Game &g, int movement, std::vector<int> &weights) {
+	do_move(g, movement);
+    std::vector<int> lines = lines_lenghts(g);
+
+    int score = 0;
+    for(int i = 0; i < (int)weights.size(); i++){
+    	score += lines[i]*weights[i];
+    }
+
+    undo_move(g, movement);
+    return score;
 }
 
 
@@ -125,6 +170,8 @@ int calculate_move_score(Game g, int move) {
  */
 int greedy_move(Game &g, float strategy_weight, float diagonal_weight, float centered_weight) {
     // Las posibles jugadas son las alturas de cada columna en tanto ninguna de ellas haya alcanzado el máximo
+	std::vector<int> weights(g.cols, 0);
+	for(int i = 2; i < (int)weights.size(); i++) weights[i] = i;
 
     int best_movement = -1;
     int best_movement_score = -1;
@@ -133,7 +180,7 @@ int greedy_move(Game &g, float strategy_weight, float diagonal_weight, float cen
             // Es una jugada posible
 
             int possible_move = i;
-            int possible_move_score = calculate_move_score(g, i);
+            int possible_move_score = calculate_move_score(g, i, weights);
 
             if (best_movement_score < possible_move_score) {
                 best_movement = possible_move;
@@ -142,12 +189,16 @@ int greedy_move(Game &g, float strategy_weight, float diagonal_weight, float cen
         }
     }
 
+    //best_movement = rand() % g.cols-1;
     return best_movement;
 }
 
+
+
+
+
 void play(Game &g, int movement) {
-    int height = g.heights[movement]++;
-    g.board[height][movement] = g.current_player;
+    do_move(g, movement);
     if(g.current_player == PLAYER_1)
         send(movement);
 }
@@ -195,6 +246,9 @@ int main() {
 
             g.current_player = PLAYER_1;
             int best_move = greedy_move(g, 0.0, 0.0, 0.0);
+            lines_lenghts(g);
+            show_board(g.board);
+            show_lines(g);
             play(g, best_move);
         }
     }
