@@ -6,7 +6,7 @@
 #include <vector>
 #include <stdio.h>
 #include <sys/stat.h>
-
+//foo
 std::random_device rd;
 std::mt19937 generator(rd());
 
