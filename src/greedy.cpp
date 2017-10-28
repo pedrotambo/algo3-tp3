@@ -1,19 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <random>
-#include <cstdlib>
-#include <vector>
-#include <stdio.h>
-#include <sys/stat.h>
-
-std::random_device rd;
-std::mt19937 generator(rd());
-
-const int PLAYER_1 = 1;
-const int PLAYER_2 = 2;
-const int EMPTY = 0;
-
+#include "greedy.h"
 
 void send(const std::string& msg) {
     std::cout << msg << std::endl;
@@ -42,32 +30,6 @@ std::string read_str() {
     }
     return msg;
 }
-
-
-
-
-
-struct Game{
-    Game(int _rows, int _cols, int _c, int _p, int _current_player){
-        c = _c;
-        rows = _rows;
-        cols = _cols;
-        current_player = _current_player;
-        p = _p;
-
-        board = std::vector< std::vector<int>>(rows, std::vector<int>(cols));
-        heights = std::vector<int>(cols); //cada indice (i) de este vector indica el alto de la columna (i)
-
-    }
-
-    std::vector< std::vector<int>> board;
-    std::vector<int> heights;
-    int c;
-    int rows;
-    int cols;
-    int p;
-    int current_player;
-};
 
 void do_move(Game &g, int movement) {
     int height = g.heights[movement]++;
@@ -168,10 +130,8 @@ int calculate_move_score(Game &g, int movement, std::vector<int> &weights) {
  *    a alguna de los extremos. Entonces de ser 1 buscará colocar la ficha desde los extremos en primer lugar, y si es 0
  *    desde el centro, los valores intermedios... ni idea.
  */
-int greedy_move(Game &g, float strategy_weight, float diagonal_weight, float centered_weight) {
+int greedy_move(Game &g, std::vector<int> &weights) {
     // Las posibles jugadas son las alturas de cada columna en tanto ninguna de ellas haya alcanzado el máximo
-	std::vector<int> weights(g.cols, 0);
-	for(int i = 2; i < (int)weights.size(); i++) weights[i] = i;
 
     int best_movement = -1;
     int best_movement_score = -1;
@@ -193,16 +153,11 @@ int greedy_move(Game &g, float strategy_weight, float diagonal_weight, float cen
     return best_movement;
 }
 
-
-
-
-
 void play(Game &g, int movement) {
     do_move(g, movement);
     if(g.current_player == PLAYER_1)
         send(movement);
 }
-
 
 int main() {
     //std::default_random_engine generator;
@@ -230,8 +185,11 @@ int main() {
         Game g(rows, columns, c, p, current_player);
         // Nota: Según esta implementación soy siempre PLAYER_1
 
+        std::vector<int> weights(g.cols, 0);
+        for(int i = 2; i < weights.size(); i++) weights[i] = i;
+
         if (current_player == PLAYER_1) {
-            int best_move = greedy_move(g, 0.0, 0.0, 0.0);
+            int best_move = greedy_move(g, weights);
             play(g, best_move);
         }
 
@@ -245,10 +203,11 @@ int main() {
             play(g, std::stoi(msg));
 
             g.current_player = PLAYER_1;
-            int best_move = greedy_move(g, 0.0, 0.0, 0.0);
+
+            int best_move = greedy_move(g, weights);
             lines_lenghts(g);
-            show_board(g.board);
-            show_lines(g);
+//            show_board(g.board);
+//            show_lines(g);
             play(g, best_move);
         }
     }
