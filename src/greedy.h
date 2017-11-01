@@ -20,7 +20,8 @@ struct Game{
         rows = _rows;
         cols = _cols;
         current_player = _current_player;
-        p = _p;
+        p = 0;
+        max_p = std::min(_p, _rows * _cols);
 
         board = std::vector< std::vector<int>>(rows, std::vector<int>(cols));
         heights = std::vector<int>(cols); //cada indice (i) de este vector indica el alto de la columna (i)
@@ -33,6 +34,7 @@ struct Game{
     int rows;
     int cols;
     int p;
+    int max_p;
     int current_player;
 };
 
