@@ -33,7 +33,7 @@ float fitness_score(Game &g, std::vector<int> input_genome, std::vector< std::ve
             games_lost++;
     }
 
-    return (games_played - games_lost) / games_played;
+    return (float)(games_played - games_lost) / games_played;
 }
 
 std::random_device rd;
@@ -54,15 +54,16 @@ std::vector<int> generate_random_genome(int c) {
 
 int main() {
 
+    int c = 7;
     // Juego base
-    Game g(7, 6, 4, 42, PLAYER_1);
+    Game g(10, 10, c, 100, PLAYER_1);
 
     // Probablemente tiene sentido para un C mas grande que 4, el genoma es muy chico de esta forma
     std::vector< std::vector<int> > genomes(100);
 
     // Creo los genomas de manera aleatoria
     for (int i = 0; i < 100; i++) {
-        genomes[i] = generate_random_genome(4);
+        genomes[i] = generate_random_genome(c);
     }
 
     std::ofstream genomes_scores;

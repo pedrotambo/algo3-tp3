@@ -12,7 +12,7 @@ std::vector<int> lines_lenghts(Game &g){
         for (int i = 0; i < g.cols - 1; i++) {
             int partial_count = 1;
 
-            while (i + 1 < g.cols and g.board[j][i] == g.board[j][i+1] and g.board[j][i] == PLAYER_1) {
+            while (i + 1 < g.cols and g.board[j][i] == g.board[j][i+1] and g.board[j][i] == next_player(g.current_player)) {
                 partial_count++;
                 i++;
             }
@@ -25,7 +25,7 @@ std::vector<int> lines_lenghts(Game &g){
         for (int i = 0; i < g.rows - 1; i++) {
             int partial_count = 1;
 
-            while (i + 1 < g.rows and g.board[i][j] == g.board[i+1][j] and g.board[i][j] == PLAYER_1) {
+            while (i + 1 < g.rows and g.board[i][j] == g.board[i+1][j] and g.board[i][j] == next_player(g.current_player)) {
                 partial_count++;
                 i++;
             }
@@ -88,7 +88,7 @@ int greedy_move(Game &g, std::vector<int>& parameters) {
     }
 
     //best_movement = rand() % g.cols-1;
-    std::cerr << best_movement << " " << g.heights[best_movement] << std::endl;
+//    std::cerr << best_movement << " " << g.heights[best_movement] << std::endl;
     return best_movement;
 }
 
