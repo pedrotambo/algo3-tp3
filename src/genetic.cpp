@@ -1,5 +1,4 @@
 #include "greedy.h"
-#include <string>
 #include <sstream>
 
 
@@ -120,28 +119,31 @@ int finished(Game &g, int movement){
 
 // Play ya estaba en uso je, devuelve 0 si empataron, 1 si gano el input, 2 si ganó el rival
 int fight(Game &g, std::vector<int> input_genome, std::vector<int> rival_genome) {
-    int movement, result;
+    int movement = 0, result;
     if (g.current_player == 1) {
         movement = greedy_move(g, input_genome);
-        play(g, movement);
+        do_move(g, movement);
+        g.current_player = 2;
     }
 
 
     while ((result = finished(g, movement)) != -1) {
         movement = greedy_move(g, rival_genome);
-        play(g, movement);
+        do_move(g, movement);
+        g.current_player = 1;
         if ((result = finished(g, movement)) != -1)
             break;
 
         movement = greedy_move(g, input_genome);
-        play(g, movement);
+        do_move(g, movement);
+        g.current_player = 2;
     }
 
     return result;
 }
 
 // Definida como el procentaje de juegos no perdidos sobre el total, recibe el genoma a valuar y los de sus rivales
-float fitness_score(Game &g, std::vector<int> input_genome, std::vector< std::vector<int>> enemies_genomes) {
+float fitness_score(Game &g, std::vector<int> input_genome, std::vector< std::vector<int> > enemies_genomes) {
 
     // Itero sobre cada genoma rival, y juego dos partidas para cada uno, una donde arranca el input_genome, y otro
     // donde arranca el rival
@@ -188,18 +190,21 @@ int main() {
     Game g(7, 6, 21, 4, 1);
 
     // Probablemente tiene sentido para un C mas grande que 4, el genoma es muy chico de esta forma
-    std::vector< std::vector<int>> genomes(100);
+    std::vector< std::vector<int> > genomes(100);
 
     // Creo los genomas de manera aleatoria
     for (int i = 0; i < 100; i++) {
         genomes[i] = generate_random_genome(4);
     }
 
+    std::ofstream genomes_scores;
+    genomes_scores.open ("genomes_scores.txt");
     // Evaluo a cada uno y printeo su score de fitness
     for (int i = 0; i < 100; i++) {
         std::stringstream result;
         std::copy(genomes[i].begin(), genomes[i].end(), std::ostream_iterator<int>(result, " "));
 
-        std::cout << i << " " << result.str().c_str() << " " << fitness_score(g, genomes[i], genomes) << std::endl;
+        genomes_scores << i << " " << result.str().c_str() << " " << fitness_score(g, genomes[i], genomes) << "\n";
     }
+    genomes_scores.close();
 }
