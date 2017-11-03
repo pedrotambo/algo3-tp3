@@ -19,14 +19,14 @@ float fitness_score(Game &g, std::vector<int> input_genome, std::vector< std::ve
     int games_lost = 0;
     for (int i = 0; i < (int)enemies_genomes.size(); i++) {
         // Creo un nuevo juego a partir de los parámetros del original, TODO: crear constructor por copia
-        Game g_home(g.rows, g.cols, g.c, g.p, PLAYER_1);
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
 
         int result = fight(g_home, input_genome, enemies_genomes[i]);
 
         if (result == PLAYER_2)
             games_lost++;
 
-        Game g_away(g.rows, g.cols, g.c, g.p, PLAYER_2);
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
         result = fight(g_away, input_genome, enemies_genomes[i]);
 
         if (result == PLAYER_2)
