@@ -12,14 +12,16 @@ alpha-beta.o: alpha-beta.cpp
 random_player.o: random_player.cpp
 	$(CC) $(CFLAGS) random_player.cpp
 
+genetic: greedy.o genetic.o
+	$(CC) genetic.o -o genetic
+
 greedy.o: greedy.cpp
 	$(CC) $(CFLAGS) greedy.cpp
 
-genetic.o: genetic.cpp
+genetic.o: genetic.cpp greedy.cpp
 	$(CC) $(CFLAGS) genetic.cpp
 
-genetic: genetic.o greedy.o
-	$(CC) genetic.o -o genetic
+
 
 clean:
 	rm -f *.o
