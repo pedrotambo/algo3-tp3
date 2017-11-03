@@ -17,7 +17,7 @@ float fitness_score(Game &g, std::vector<int> input_genome, std::vector< std::ve
     // donde arranca el rival
     int games_played = enemies_genomes.size() * 2;
     int games_lost = 0;
-    for (int i = 0; i < enemies_genomes.size(); i++) {
+    for (int i = 0; i < (int)enemies_genomes.size(); i++) {
         // Creo un nuevo juego a partir de los parámetros del original, TODO: crear constructor por copia
         Game g_home(g.rows, g.cols, g.c, g.p, PLAYER_1);
 
@@ -44,7 +44,7 @@ std::vector<int> generate_random_genome(int c) {
 
     std::vector<int> result(c);
 
-    for (int i = 0; i < result.size(); i++) {
+    for (int i = 0; i < (int)result.size(); i++) {
         result[i] = random_weight(generator);
     }
 
