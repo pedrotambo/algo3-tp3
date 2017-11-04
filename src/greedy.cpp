@@ -44,6 +44,7 @@ std::vector<int> lenght_lines(Game &g){
             //result[partial_count]++;
             // Si es una cadena mayor a 1, la sumo.
             if(partial_count > 1) result[partial_count]++;
+
         }
     }
 
@@ -60,7 +61,6 @@ std::vector<int> lenght_lines(Game &g){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i][i+down] == next_player(g.current_player)) result[1]++;
             i += 1;
         }
         down += 1;
@@ -77,7 +77,6 @@ std::vector<int> lenght_lines(Game &g){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i+up][i] == next_player(g.current_player)) result[1]++;
             i += 1;
         }
         up += 1;
@@ -98,7 +97,6 @@ std::vector<int> lenght_lines(Game &g){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i][up+j] == next_player(g.current_player)) result[1]++;
             i -= 1;
             j += 1;
         }
@@ -118,7 +116,6 @@ std::vector<int> lenght_lines(Game &g){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i-down][j] == next_player(g.current_player)) result[1]++;
             i -= 1;
             j += 1;
         }
@@ -151,10 +148,12 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
 
             //result[partial_count]++;
             // Si es una cadena mayor a 1, la sumo.
-            if(partial_count > 1) result[partial_count]++;
+            if(partial_count > 1){
+                result[partial_count] += partial_count * m[i][partial_count];
+            }
                 
             // Si es una cadena de uno y es mi ficha, sumo uno (esto lo hago unicamente en horizontal, luego no).
-            if(partial_count == 1 && g.board[i][j] == next_player(g.current_player)) result[1]++;
+            if(partial_count == 1 && g.board[i][j] == next_player(g.current_player)) result[1] += m[i][1];
         }
     }
 
@@ -171,9 +170,12 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
 
             partial_count = (partial_count > g.c)? g.c : partial_count;
             
-            //result[partial_count]++;
-            // Si es una cadena mayor a 1, la sumo.
-            if(partial_count > 1) result[partial_count]++;
+            if(partial_count > 1){
+                for(int k = i-1; k >= i - partial_count; k--){
+                    result[partial_count] += m[k][j];
+                }
+            }
+
         }
     }
 
@@ -189,8 +191,13 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
                 i += 1;
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
-            if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i][i+down] == next_player(g.current_player)) result[1]++;
+
+            if(partial_count > 1){
+                for(int k = 0; k < partial_count; k++){
+                    result[partial_count] += m[i-k][i+down-k];
+                } 
+            }
+
             i += 1;
         }
         down += 1;
@@ -207,7 +214,11 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i+up][i] == next_player(g.current_player)) result[1]++;
+            if(partial_count > 1){
+                for(int k = 0; k < partial_count; k++){
+                    result[partial_count] += m[i+up-k][i-k];
+                } 
+            }
             i += 1;
         }
         up += 1;
@@ -228,7 +239,11 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i][up+j] == next_player(g.current_player)) result[1]++;
+            if(partial_count > 1){
+                for(int k = 0; k < partial_count; k++){
+                    result[partial_count] += m[i+k][up+j-k];
+                } 
+            }
             i -= 1;
             j += 1;
         }
@@ -248,7 +263,11 @@ std::vector<int> quality_lines(Game &g, std::vector< std::vector<int> >& m){
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) result[partial_count]++;
-            if(partial_count == 1 && g.board[i-down][j] == next_player(g.current_player)) result[1]++;
+            if(partial_count > 1){
+                for(int k = 0; k < partial_count; k++){
+                    result[partial_count] += m[i-down+k][j-k];
+                } 
+            }
             i -= 1;
             j += 1;
         }
@@ -271,6 +290,10 @@ int calculate_move_score(Game &g, int movement, std::vector<int>& p, std::vector
     // Por ahora esto solo se hace con las lineas 
     for(unsigned int i = 0; i < number_of_lines_of_length.size() - 1; i++){
         score += number_of_lines_of_length[i]*p[i];
+    }
+
+    for(unsigned int i = 0; i < number_of_lines_of_length.size() - 1; i++){
+        score += quality_of_lines_of_length[i]*q[i];
     }
 
     if (number_of_lines_of_length[g.c] > 0){
