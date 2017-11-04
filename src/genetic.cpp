@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#define WIN 10
+#define TIE 5
+#define LOSE -2
 
 std::random_device rd;
 std::mt19937 generator(rd());
@@ -63,6 +66,35 @@ float fitness_score(Game &g, Individual &input_genome, std::vector<Individual> &
     return (float)(games_played - games_lost) / games_played;
 }
 
+// Definida como el procentaje de juegos no perdidos sobre el total, recibe el genoma a valuar y los de sus rivales
+float fitness_score_alternative(Game &g, Individual &input_genome, std::vector<Individual> &enemies_genomes) {
+
+    // Itero sobre cada genoma rival, y juego dos partidas para cada uno, una donde arranca el input_genome, y otro
+    // donde arranca el rival
+    int games_played = enemies_genomes.size() * 2;
+    //int games_lost = 0;
+    float score = 0;
+    for (unsigned int i = 0; i < enemies_genomes.size(); i++) {
+        // Creo un nuevo juego a partir de los parámetros del original, TODO: crear constructor por copia
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+
+        int result = fight(g_home, input_genome.genome, enemies_genomes[i].genome);
+
+        if (result == PLAYER_1) score+= WIN;
+        if (result == PLAYER_2) score+= LOSE;
+        if (result == TIED) score+= TIE;
+
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+        result = fight(g_away, input_genome.genome, enemies_genomes[i].genome);
+
+        if (result == PLAYER_1) score+= 3*WIN;
+        if (result == PLAYER_2) score+= LOSE;
+        if (result == TIED) score+= 2*TIE;
+
+    }
+    return score;
+}
+
 void show_population(std::vector<Individual> &population){
 	for(unsigned int i = 0; i < population.size(); i++){
 		std::cout << "Individual: " << i << ", Score: " << population[i].score;
@@ -99,7 +131,7 @@ void evaluate_population(Game &g, std::vector<Individual> &population){
 
 	for(unsigned int i = 0; i < population.size(); i++){
 		// Evalúo el individuo i contra todos los demás.
-		population[i].score = fitness_score(g, population[i], population);
+		population[i].score = fitness_score_alternative(g, population[i], population);
 
 	}
 }
@@ -109,32 +141,51 @@ void selection(std::vector<Individual> &population){
 	// Como los ordeno por puntaje, basta hacer un sort decreciente en base a su score.
 	std::sort(population.rbegin(), population.rend());
 
+    // Me quedo con la mejor mitad
+    population.resize(population.size() / 2);
+}
+
+void alternative_selection(std::vector<Individual> &population) {
+    std::sort(population.rbegin(), population.rend());
+
+    std::vector<Individual> selected(population.size());
+    int i = 0;
+    while (selected.size() < population.size() / 2) {
+        float d = (float)(rand() % PRECISION) / (float)PRECISION;
+
+        // Si el score del individuo es mayor a un random (entre 0 y 1) lo mantengo
+        if (population[i].score > d) {
+            selected.push_back(population[i]);
+        }
+        i++;
+    }
+
+    population = selected;
 }
 
 
+Individual crossover_individual(Individual father, Individual mother, float probability) {
+    Individual son(father.genome.size());
+    for(unsigned int k = 0; k < father.genome.size(); k++){
+        float d = (float)(rand() % PRECISION) / (float)PRECISION;
+        son.genome[k] = (d < probability)? father.genome[k]:mother.genome[k];
+    }
+    return son;
+
+}
 // Pre: probability tiene que ser un float entre [0,1]
 // Post: Devuelve una nueva poblacion
 void crossover(std::vector<Individual> &population, float probability){
-	
-	for(unsigned int i = 0; i < population.size()/2; i+=2){
+
+    unsigned int pop_size = population.size();
+	for(unsigned int i = 0; i < pop_size; i+=2){
 		//float d = (float)(rand() % PRECISION) / (float)PRECISION;
 		// Cruzo los individuos i e i+1 y genero otros dos individuos a partir de ellos (diapos)
-		Individual son_1(population[i].genome.size());
-		for(unsigned int k = 0; k < population[i].genome.size(); k++){
-			float d = (float)(rand() % PRECISION) / (float)PRECISION;
-			son_1.genome[k] = (d < probability)? population[i].genome[k]:population[i+1].genome[k];
-		}
+        Individual father = population[i];
+        Individual mother = population[i+1];
 
-		Individual son_2(population[i].genome.size());
-		for(unsigned int k = 0; k < population[i].genome.size(); k++){
-			float d = (float)(rand() % PRECISION) / (float)PRECISION;
-			son_2.genome[k] = (d < probability)? population[i].genome[k]:population[i+1].genome[k];
-		}
-
-		population[population.size()/2 + i] = son_1;
-		population[population.size()/2 + i + 1] = son_2;
-		
-
+        population.push_back(crossover_individual(father, mother, probability));
+        population.push_back(crossover_individual(father, mother, probability));
 	}
 }
 
@@ -172,6 +223,7 @@ int main() {
     do {
     	evaluate_population(g, population);
     	selection(population);
+        // alternative_selection(population);
     	crossover(population, 0.5);
     	mutation(population, 0.01);
     	show_population(population);
