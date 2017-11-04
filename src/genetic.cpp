@@ -174,10 +174,10 @@ int main() {
     	selection(population);
     	crossover(population, 0.5);
     	mutation(population, 0.01);
-    	//show_population(population);
+    	show_population(population);
     	std::cout << i << std::endl;
     	i++;
-    } while(i < 10); // acá iría el criterio de terminación
+    } while(i < 100); // acá iría el criterio de terminación
 
     show_population(population);
 

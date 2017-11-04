@@ -5,7 +5,6 @@
 std::vector<int> lenght_lines(Game &g){
 
     std::vector<int> result(g.c + 1, 0);
-    //std::vector<int> result(g.cols + 1, 0);
 
     // cuento lineas horizontales
     for (int i = 0; i < g.rows; i++) {
@@ -49,6 +48,83 @@ std::vector<int> lenght_lines(Game &g){
         }
     }
 
+    // Diagonal /
+    int down = 0;
+    while(down < g.cols - 1){
+        int i = 0;
+        while(i < g.rows - 1 and down + i < g.cols - 1){
+            int partial_count = 1;
+
+            while(i < g.rows - 1 and down + i < g.cols - 1 and g.board[i][i+down] == g.board[i+1][i+down+1] and g.board[i][i+down] == next_player(g.current_player)){
+                partial_count += 1;
+                i += 1;
+            }
+            partial_count = (partial_count > g.c)? g.c : partial_count;
+            if(partial_count > 1) result[partial_count]++;
+            if(partial_count == 1 && g.board[i][i+down] == next_player(g.current_player)) result[1]++;
+            i += 1;
+        }
+        down += 1;
+    }
+    int up = 1;
+    while(up < g.rows - 1){ 
+        int i = 0;
+        while(i < g.cols - 1 and up + i < g.rows - 1){
+            int partial_count = 1;
+
+            while(i < g.cols - 1 and up + i < g.rows - 1 and g.board[i+up][i] == g.board[i+up+1][i+1] and g.board[i+up][i] == next_player(g.current_player)){
+                partial_count += 1;
+                i += 1;
+            }
+            partial_count = (partial_count > g.c)? g.c : partial_count;
+            if(partial_count > 1) result[partial_count]++;
+            if(partial_count == 1 && g.board[i+up][i] == next_player(g.current_player)) result[1]++;
+            i += 1;
+        }
+        up += 1;
+    }
+
+    // Diagonal \ -
+    up = 0;
+    while(up < g.cols - 1){
+        int i = g.rows - 1;
+        int j = 0;
+        while(0 < i and up + j < g.cols - 1){
+            int partial_count = 1;
+
+            while(0 < i and up + j < g.cols - 1 and g.board[i][up+j] == g.board[i-1][up+1+j] and g.board[i][up+j] == next_player(g.current_player)){
+                partial_count += 1;
+                i -= 1;
+                j += 1;
+            }
+            partial_count = (partial_count > g.c)? g.c : partial_count;
+            if(partial_count > 1) result[partial_count]++;
+            if(partial_count == 1 && g.board[i][up+j] == next_player(g.current_player)) result[1]++;
+            i -= 1;
+            j += 1;
+        }
+        up += 1;
+    }
+    down = 0;
+    while(down < g.rows - 1){
+        int i = g.rows - 1 - 1;
+        int j = 0;
+        while(0 < i - down and j < g.cols - 1){
+            int partial_count = 1;
+
+            while(0 < i - down and j < g.cols - 1 and g.board[i-down][j] == g.board[i-down-1][j+1] and g.board[i-down][j] == next_player(g.current_player)){
+                partial_count += 1;
+                i -= 1;
+                j += 1;
+            }
+            partial_count = (partial_count > g.c)? g.c : partial_count;
+            if(partial_count > 1) result[partial_count]++;
+            if(partial_count == 1 && g.board[i-down][j] == next_player(g.current_player)) result[1]++;
+            i -= 1;
+            j += 1;
+        }
+        down += 1;
+    }
 
     result[0] = 0;
     result[1] = 0;
@@ -93,7 +169,13 @@ int greedy_move(Game &g, std::vector<int>& parameters) {
         }
     }
 
-    //best_movement = rand() % g.cols-1;
-//    std::cerr << best_movement << " " << g.heights[best_movement] << std::endl;
+    // do_move(g, best_movement);
+    // std::vector<int> lines = lenght_lines(g);
+    // for(int i = 0; i < lines.size(); ++i){
+    //     std::cerr << lines[i] << " ";
+    // }
+    // std::cerr << std::endl;
+    // undo_move(g, best_movement);
+
     return best_movement;
 }
