@@ -1,7 +1,10 @@
-#include <random>
 #include "greedy.h"
+#include <stdlib.h>
+#include <time.h>
 
 int main() {
+
+    srand(time(NULL));
 
     //std::default_random_engine generator;
     std::string msg, color, oponent_color, go_first;

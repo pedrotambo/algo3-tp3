@@ -3,6 +3,8 @@
 
 #include "game.h"
 #include <climits>
+#include <algorithm>
+#include <random>
 
 int greedy_move(Game &g, std::vector<int>& parameters);
 

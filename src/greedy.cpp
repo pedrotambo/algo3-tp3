@@ -1,4 +1,3 @@
-#include <random>
 #include "greedy.h"
 
 // Devuelve un arreglo donde cada índice (i) indica la cantidad de juegos formados de tamaño i
@@ -291,37 +290,45 @@ void assign_parameters(std::vector<int>& parameters, std::vector<int>& p, std::v
     p = parameters;
 }
 
-int greedy_move(Game &g, std::vector<int>& parameters) {
-    // Las posibles jugadas son las alturas de cada columna en tanto ninguna de ellas haya alcanzado el máximo
+struct movement_score { 
+    int movement; 
+    int score; 
+    bool operator<(const movement_score& other){
+        return this->score < other.score;
+    }
+}; 
 
+int random_max(std::vector<movement_score>& valid_movements){
+    std::sort(valid_movements.rbegin(), valid_movements.rend());
+    std::vector<movement_score> best;
+    best.push_back(valid_movements[0]);
+    int i = 1;
+    while(i < valid_movements.size() and best[0].score == valid_movements[i].score){
+        best.push_back(valid_movements[i]);
+        i++;
+    }
+    int r = rand() + rand() + 1;
+    // std::cerr << r << " " << best.size() << std::endl;
+    return best[r % best.size()].movement;
+}
+
+int greedy_move(Game &g, std::vector<int>& parameters) {
     std::vector<int> p;
     std::vector<int> q;
     std::vector<int> r;
     std::vector< std::vector<int> > m;
     assign_parameters(parameters, p, q, r, m);
 
-    int best_movement = -1;
-    int best_movement_score = -1;
+    std::vector<movement_score> valid_movements;
+
     for (int i = 0; i < g.cols; i++) {
         if (valid_move(g, i)) {
-
-            int possible_move = i;
-            int possible_move_score = calculate_move_score(g, i, p, q, r, m);
-
-            if (best_movement_score < possible_move_score) {
-                best_movement = possible_move;
-                best_movement_score = possible_move_score;
-            }
+            movement_score mc;
+            mc.movement = i;
+            mc.score = calculate_move_score(g, i, p, q, r, m);
+            valid_movements.push_back(mc);
         }
     }
 
-    // do_move(g, best_movement);
-    // std::vector<int> lines = lenght_lines(g);
-    // for(int i = 0; i < lines.size(); ++i){
-    //     std::cerr << lines[i] << " ";
-    // }
-    // std::cerr << std::endl;
-    // undo_move(g, best_movement);
-
-    return best_movement;
+    return random_max(valid_movements);
 }
