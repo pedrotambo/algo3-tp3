@@ -19,7 +19,13 @@ int main() {
         Game g(rows, columns, c, p, PLAYER_2);
 
         // TODO leer params
-        std::vector<int> parameters(c, 5);
+        //std::vector<int> parameters = {30, 47, 8, 57}; // Parametros del genetico para 4 4 3
+        std::vector<int> parameters = {51, 74, 2, 9, 44, 83, 86,  INT_MAX}; // Parametros del genetico para 10 10 7 BEST
+        //std::vector<int> parameters = {68, 58, 4, 17, 29, 36, 71,  INT_MAX}; // Parametros del genetico 10 10 7
+        //std::vector<int> parameters = {49, 37, 0, 51, 54, 58, 98,  INT_MAX}; // Parametros del genetico 10 10 7
+        
+        //std::vector<int> parameters = {1000, 10, 15, 20, 30, 40, 50,  INT_MAX}; // MANUAL
+        //std::vector<int> parameters = {0, 10, 25, 50, 80, 140, 280, INT_MAX}; // MANUAL 
 
         go_first = read_str();
         if (go_first == "vos") {
