@@ -309,8 +309,36 @@ int calculate_move_score(Game &g, int movement, std::vector<int>& p, std::vector
 // weights of lines quality                                             --> q
 // weights of lines length associated with the number of played tiles   --> r
 // matrix weight of (rows X lines length)                               --> m
-void assign_parameters(std::vector<int>& parameters, std::vector<int>& p, std::vector<int>& q, std::vector<int>& r, std::vector< std::vector<int> >& m){
-    p = parameters;
+// If g.rows = n, g.cols = m (m>=3) then it assumes params_size = 3*(cols-2) + rows*(cols-2).
+// Example, n=6, m=5 => p:3, q:3, r:3, m:18, params size should be = {0,1,2,3,...,23,24,25,26}.
+void assign_parameters(int rows, int cols, std::vector<int>& parameters, std::vector<int>& p, std::vector<int>& q, std::vector<int>& r, std::vector< std::vector<int> >& m){
+    // Only with first basic parameter.
+    // p = parameters;
+
+    int global_index = 0;
+    for (int i = 0; i < cols - 2; ++i) {
+        p.push_back(parameters[global_index]);
+        global_index++;
+    }
+
+    for (int i = 0; i < cols - 2; ++i) {
+        q.push_back(parameters[global_index]);
+        global_index++;
+    }
+
+    for (int i = 0; i < cols - 2; ++i) {
+        r.push_back(parameters[global_index]);
+        global_index++;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        std::vector<int> row;
+        for (int j = 0; j < cols - 2; ++j) {
+            row.push_back(parameters[global_index]);
+            global_index++;
+        }
+        m.push_back(row);
+    }
 }
 
 struct movement_score { 
@@ -326,7 +354,7 @@ int random_max(std::vector<movement_score>& valid_movements){
     std::vector<movement_score> best;
     best.push_back(valid_movements[0]);
     int i = 1;
-    while(i < valid_movements.size() and best[0].score == valid_movements[i].score){
+    while(i < static_cast<int>(valid_movements.size()) and best[0].score == valid_movements[i].score){
         best.push_back(valid_movements[i]);
         i++;
     }
@@ -340,7 +368,7 @@ int greedy_move(Game &g, std::vector<int>& parameters) {
     std::vector<int> q;
     std::vector<int> r;
     std::vector< std::vector<int> > m;
-    assign_parameters(parameters, p, q, r, m);
+    assign_parameters(g.rows, g.cols, parameters, p, q, r, m);
 
     std::vector<movement_score> valid_movements;
 
