@@ -75,6 +75,7 @@ float fitness_score_alternative(Game &g, Individual &input_genome, std::vector<I
     //int games_lost = 0;
     float score = 0;
     for (unsigned int i = 0; i < enemies_genomes.size(); i++) {
+        // std::cerr << "    " << i+1 << "/" << enemies_genomes.size() << std::endl;
         // Creo un nuevo juego a partir de los parámetros del original, TODO: crear constructor por copia
         Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
 
@@ -130,6 +131,7 @@ std::vector<Individual> initial_population(int lenght_population, int parameters
 void evaluate_population(Game &g, std::vector<Individual> &population){
 
 	for(unsigned int i = 0; i < population.size(); i++){
+        // std::cerr << i+1 << "/" << population.size() << std::endl;
 		// Evalúo el individuo i contra todos los demás.
 		population[i].score = fitness_score_alternative(g, population[i], population);
 
@@ -209,12 +211,12 @@ void mutation(std::vector<Individual> &population, float probabilty){
 int main() {
 
     srand (time(NULL));
+    int c = 7;
+    // Juego base
+    Game g(10, 10, c, 100, PLAYER_1);
     // Es necesario que sea PAR y que su mitad también lo sea. 
     int lenght_population = 100;
-	int parameters_lenght = 7;
-    // Juego base
-    int c = 7;
-    Game g(10, 10, c, 100, PLAYER_1);
+	int parameters_lenght = (g.c-2)*3 + (g.c-3)*2 + g.rows*(g.c-2);
     
     
     std::vector<Individual> population = initial_population(lenght_population, parameters_lenght);
@@ -224,7 +226,7 @@ int main() {
     	evaluate_population(g, population);
     	selection(population);
         // alternative_selection(population);
-    	crossover(population, 0.5);
+        crossover(population, 0.5);
     	mutation(population, 0.01);
     	show_population(population);
     	std::cout << i << std::endl;
