@@ -14,6 +14,16 @@ struct movement_score {
     }
 }; 
 
+struct line_info {
+    int start;
+    int finish;
+    int start_i;
+    int start_j;
+    int finish_i;
+    int finish_j;
+    int size;
+};
+
 int greedy_move(Game &g, std::vector<int>& parameters);
 
 #endif //SRC_GREEDY_H
