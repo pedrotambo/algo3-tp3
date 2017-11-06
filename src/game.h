@@ -10,7 +10,7 @@
 #define PLAYER_2 '2'
 #define EMPTY '-'
 #define TIED '-'
-#define INFINITE 1000
+#define INFINITE 10000
 
 struct Game{
     Game(int _rows, int _cols, int _c, int _max_p, char start_player) {
