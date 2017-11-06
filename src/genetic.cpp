@@ -215,12 +215,17 @@ int main() {
     // Juego base
     Game g(10, 10, c, 100, PLAYER_1);
     // Es necesario que sea PAR y que su mitad también lo sea. 
-    int lenght_population = 100;
-	int parameters_lenght = (g.c-2)*3 + (g.c-3)*2 + g.rows*(g.c-2);
-    
+    // int lenght_population = 100;
+    int lenght_population = 40-1;
+	int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
     
     std::vector<Individual> population = initial_population(lenght_population, parameters_lenght);
-    
+    Individual good_player;
+    // good_player.genome = {5, 15, 25, 40, 90, 2, 8, 12, 30, 70, 99, 1, 2, 10, 25, 1, 2, 5, 10};
+    good_player.genome = {42, 14, 11, 65, 24, 40, 32, 5, 30, 70, 7, 6, 3, 61, 17, 21, 27, 66, 18};
+    population.push_back(good_player);
+
+
     int i = 0;
     do {
     	evaluate_population(g, population);

@@ -5,6 +5,7 @@
 #include <climits>
 #include <algorithm>
 #include <random>
+#include <assert.h>
 
 struct movement_score { 
     int movement; 
