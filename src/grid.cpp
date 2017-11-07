@@ -48,8 +48,8 @@ int main() {
     // Juego base
     Game g(10, 10, c, 100, PLAYER_1);
 
-    // TODO: modificar si se remueven parametros
-    int parameters_lenght = (g.c-2)*3 + (g.c-3)*2 + g.rows*(g.c-2);
+    // TODO: modificar si se remueven o agregan parametros
+    int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
 
     std::vector<int> parameters(parameters_lenght);
     std::uniform_int_distribution<int> random_weight(0, 100);
