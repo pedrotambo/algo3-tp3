@@ -21,17 +21,17 @@ int main() {
 
         Game g(rows, columns, c, p, PLAYER_2);
 
-        // 7 en linea
-        std::vector<int> p = {5, 15, 25, 40, 90};
-        std::vector<int> q = {2, 8, 12, 30, 70, 99};
-        std::vector<int> s = {1, 2, 10, 25};
-        std::vector<int> t = {1, 2, 5, 10};
-        std::vector<int> parameters = p;
-        parameters.insert(parameters.end(), q.begin(), q.end());
-        parameters.insert(parameters.end(), s.begin(), s.end());
-        parameters.insert(parameters.end(), t.begin(), t.end());
+        // // 7 en linea
+        // std::vector<int> p = {5, 15, 25, 40, 90};
+        // std::vector<int> q = {2, 8, 12, 30, 70, 99};
+        // std::vector<int> s = {1, 2, 10, 25};
+        // std::vector<int> t = {1, 2, 5, 10};
+        // std::vector<int> parameters = p;
+        // parameters.insert(parameters.end(), q.begin(), q.end());
+        // parameters.insert(parameters.end(), s.begin(), s.end());
+        // parameters.insert(parameters.end(), t.begin(), t.end());
 
-        // // 4 en linea
+        // 4 en linea
         // std::vector<int> p = {5, 15};
         // std::vector<int> q = {3, 20, 50};
         // std::vector<int> s = {10};
@@ -40,6 +40,9 @@ int main() {
         // parameters.insert(parameters.end(), q.begin(), q.end());
         // parameters.insert(parameters.end(), s.begin(), s.end());
         // parameters.insert(parameters.end(), t.begin(), t.end());
+
+        // 4 en linea
+        std::vector<int> parameters = {69, 76, 6, 10, 90, 19, 3};
       
         go_first = read_str();
         if (go_first == "vos") {

@@ -27,4 +27,7 @@ struct line_info {
 
 int greedy_move(Game &g, std::vector<int>& parameters);
 
+int random_max(std::vector<movement_score>& valid_movements);
+void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length, std::vector<int>& effective_lines_of_length, std::vector<int>& possible_lines_of_length);
+
 #endif //SRC_GREEDY_H

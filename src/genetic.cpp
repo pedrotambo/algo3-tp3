@@ -1,4 +1,5 @@
 #include "greedy.h"
+#include "random_blocker.h"
 #include <sstream>
 #include <algorithm>
 #include <cstdlib>
@@ -10,6 +11,7 @@
 std::random_device rd;
 std::mt19937 generator(rd());
 #define PRECISION 10000
+#define N_OF_GAMES_VS_RANDOM_PLAYERS 100
 
 struct Individual{
 	Individual(){
@@ -30,7 +32,6 @@ struct Individual{
 	std::vector<int> genome;
 	float score;
 };
-
 
 // Devuelve quien gano o si empataron
 char fight(Game &g, std::vector<int>& input_genome, std::vector<int>& rival_genome) {
@@ -127,7 +128,6 @@ std::vector<Individual> initial_population(int lenght_population, int parameters
 }
 
 // Evalúa la población y acumula los puntajes en scores
-//void evaluate_population(Game &g, std::vector< std::vector<int> > &population, std::vector<int> &scores){
 void evaluate_population(Game &g, std::vector<Individual> &population){
 
 	for(unsigned int i = 0; i < population.size(); i++){
@@ -208,27 +208,141 @@ void mutation(std::vector<Individual> &population, float probabilty){
 
 }
 
+/*****************************************************************************/
+/*****************************************************************************/
+
+char fight_vs_best_player(Game &g, std::vector<int>& mine_parameters, std::vector<int>& opponent_parameters){
+    while(not finished(g)){
+        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, mine_parameters) : greedy_move(g, opponent_parameters);
+        do_move(g, movement);
+    }
+    return winner(g);
+}
+
+char fight_vs_random_blocker(Game &g, std::vector<int>& parameters){
+    while(not finished(g)){
+        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, parameters) : random_blocker_move(g);
+        do_move(g, movement);
+    }
+    return winner(g);
+}
+
+char fight_vs_random(Game &g, std::vector<int>& parameters){
+    while(not finished(g)){
+        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, parameters) : random_move(g);
+        do_move(g, movement);
+    }
+    return winner(g);
+}
+
+char fight_vs_random_individual_from_population(Game &g, std::vector<int>& mine_parameters, std::vector<int>& opponent_parameters){
+    while(not finished(g)){
+        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, mine_parameters) : greedy_move(g, opponent_parameters);
+        do_move(g, movement);
+    }
+    return winner(g);
+}
+
+Individual& get_best_player(std::vector<Individual>& population){
+    Individual& mvp = population[0];
+    for(unsigned int i = 1; i < population.size(); ++i){
+        if(mvp.score < population[i].score)
+            mvp = population[i];
+    }
+    return mvp;
+}
+
+float fitness_score_vs_pool_of_players(Game &g, std::vector<Individual>& population, Individual& input_genome){
+    int games_played = 0;
+    int games_won = 0;
+
+    // Vs best player
+    Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+    int result = fight_vs_best_player(g_home, input_genome.genome, get_best_player(population).genome);
+    games_played++;
+    if(result == PLAYER_1) games_won++;
+
+    Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+    games_played++;
+    result = fight_vs_best_player(g_away, input_genome.genome, get_best_player(population).genome);
+    if(result == PLAYER_1) games_won++;
+
+    // Vs random
+    for(unsigned int i = 0; i < N_OF_GAMES_VS_RANDOM_PLAYERS; i++){
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+        int result = fight_vs_random(g_home, input_genome.genome);
+        games_played++;
+        if(result == PLAYER_1) games_won++;
+
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+        games_played++;
+        result = fight_vs_random(g_away, input_genome.genome);
+        if(result == PLAYER_1) games_won++;
+    }
+
+    // Vs random_blocker
+    for(unsigned int i = 0; i < N_OF_GAMES_VS_RANDOM_PLAYERS; i++){
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+        int result = fight_vs_random_blocker(g_home, input_genome.genome);
+        games_played++;
+        if(result == PLAYER_1) games_won++;
+        
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+        games_played++;
+        result = fight_vs_random_blocker(g_away, input_genome.genome);
+        if(result == PLAYER_1) games_won++;
+    }
+
+    // Vs random individuals from population: fight against 10% of the population
+    for(unsigned int i = 0; i < population.size() * 0.10 ; i++){
+        int r = rand() % population.size();
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+        int result = fight_vs_random_individual_from_population(g_home, input_genome.genome, population[r].genome);
+        games_played++;
+        if(result == PLAYER_1) games_won++;
+        
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+        games_played++;
+        result = fight_vs_random_individual_from_population(g_away, input_genome.genome, population[r].genome);
+        if(result == PLAYER_1) games_won++;
+    }
+
+    return (float)(games_won) / games_played;
+}
+
+void evaluate_population_with_pool_of_players(Game &g, std::vector<Individual>& population){
+    for(unsigned int i = 0; i < population.size(); i++){
+        std::cerr << " | " << i;
+        population[i].score = fitness_score_vs_pool_of_players(g, population, population[i]);
+    }
+    std::cerr << std::endl;
+}
+
+/*****************************************************************************/
+/*****************************************************************************/
+
+
 int main() {
 
     srand (time(NULL));
-    int c = 7;
+    int c = 4;
     // Juego base
-    Game g(10, 10, c, 100, PLAYER_1);
-    // Es necesario que sea PAR y que su mitad también lo sea. 
-    // int lenght_population = 100;
-    int lenght_population = 40-1;
-	int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
-    
-    std::vector<Individual> population = initial_population(lenght_population, parameters_lenght);
-    Individual good_player;
-    // good_player.genome = {5, 15, 25, 40, 90, 2, 8, 12, 30, 70, 99, 1, 2, 10, 25, 1, 2, 5, 10};
-    good_player.genome = {42, 14, 11, 65, 24, 40, 32, 5, 30, 70, 7, 6, 3, 61, 17, 21, 27, 66, 18};
-    population.push_back(good_player);
+    Game g(6, 7, c, 100, PLAYER_1);
 
+    // Es necesario que sea PAR y que su mitad también lo sea. 
+    int lenght_population = 100;
+	int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
+    std::vector<Individual> population = initial_population(lenght_population, parameters_lenght);
+    
+    // int lenght_population = 100-1;
+    // Individual good_player;
+    // good_player.genome = {30, 55, 20, 60, 90, 40, 50};
+    // population.push_back(good_player);
 
     int i = 0;
     do {
-    	evaluate_population(g, population);
+        // evaluate_population(g, population);
+    	evaluate_population_with_pool_of_players(g, population);
     	selection(population);
         // alternative_selection(population);
         crossover(population, 0.5);

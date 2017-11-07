@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -c -g -Wall -std=c++11
 
-all: minimax random_player alpha-beta greedy_player genetic
+all: minimax random_player random_blocker_player alpha-beta greedy_player genetic
 
 minimax: minimax.o
 	$(CC) minimax.o -o minimax
@@ -33,20 +33,27 @@ greedy.o: greedy.cpp
 game.o: game.cpp
 	$(CC) $(CFLAGS) game.cpp
 
-genetic: genetic.o game.o greedy.o
-	$(CC) genetic.o game.o greedy.o -o genetic
+genetic: genetic.o game.o greedy.o random_blocker.o
+	$(CC) genetic.o game.o greedy.o random_blocker.o -o genetic
 
 genetic.o: genetic.cpp
 	$(CC) $(CFLAGS) genetic.cpp
 
-# g++ -std=c++11 greedy_player.cpp greedy.cpp game.cpp -o greedy_player
+random_blocker_player: random_blocker_player.o game.o greedy.o random_blocker.o
+	$(CC) random_blocker_player.o random_blocker.o game.o greedy.o -o random_blocker_player
 
-# g++ -std=c++11 genetic.cpp greedy.cpp game.cpp -o genetic
+random_blocker_player.o: random_blocker_player.cpp
+	$(CC) $(CFLAGS) random_blocker_player.cpp
+
+random_blocker.o: greedy_player.cpp random_blocker.cpp
+	$(CC) $(CFLAGS) random_blocker.cpp
+
 
 clean:
 	rm -f *.o
 	rm -f minimax
 	rm -f random_player
+	rm -f random_blocker_player
 	rm -f alpha-beta
 	rm -f genetic
 	rm -f greedy_player

@@ -44,9 +44,6 @@ void assign_parameters(int c, std::vector<int>& parameters, std::vector<int>& p,
 }
 
 int random_max(std::vector<movement_score>& valid_movements){
-
-    srand(time(NULL)); // esto aca no esta bueno pero sirve para cuando juegan greedy vs greedy
-
     std::sort(valid_movements.rbegin(), valid_movements.rend());
     std::vector<movement_score> best;
     best.push_back(valid_movements[0]);
