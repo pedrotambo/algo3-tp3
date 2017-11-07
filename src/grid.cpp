@@ -70,7 +70,7 @@ int main() {
     // Voy tomando de a 2 parametros, analizar en el futuro si el orden importa
     for (int i = 0; i < parameters_lenght; i+=2 ) {
         std::cout << "-------------------------" << std::endl;
-        std::cout << "parametro: " << i << std::endl;
+        std::cout << "parametros: " << i << " y " << i + 1 << std::endl;
         // Siempre hay i parámetros ya fijados
 
 
@@ -104,7 +104,7 @@ int main() {
         // Fijo los mejores parámetros encontrados
         parameters[i] = best_values[0];
         parameters[i+1] = best_values[1];
-        std::cout << "Mejores parámetros encontrados: " << best_values[0] << best_values[1] << std::endl;
+        std::cout << "Mejores parámetros encontrados: " << best_values[0] << " y " << best_values[1] << std::endl;
     }
 
     std::cout << "El mejor arreglo es: ";
