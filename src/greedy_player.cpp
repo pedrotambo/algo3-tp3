@@ -21,17 +21,25 @@ int main() {
 
         Game g(rows, columns, c, p, PLAYER_2);
 
-        // TODO leer params
-        // std::vector<int> parameters = {15, 18, 1, 3, 16, 33, 49 ,  INT_MAX}; // Parametros del genetico 10 10 7
+        // 7 en linea
+        std::vector<int> p = {5, 15, 25, 40, 90};
+        std::vector<int> q = {2, 8, 12, 30, 70, 99};
+        std::vector<int> s = {1, 2, 10, 25};
+        std::vector<int> t = {1, 2, 5, 10};
+        std::vector<int> parameters = p;
+        parameters.insert(parameters.end(), q.begin(), q.end());
+        parameters.insert(parameters.end(), s.begin(), s.end());
+        parameters.insert(parameters.end(), t.begin(), t.end());
 
-
-        // Parametros 4 en linea: 6 rows, 7 cols, c == 4
-        // p=[20, 40], q=[10, 30], r=[15, 65], s=[20], t=[10], m=[[1, 2],[3, 4],[5, 6],[7, 8],[9, 10],[11, 12]] 
-        std::vector<int> parameters = {20, 90, 10, 30, 15, 65, 20, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; 
-
-        // Parametros 7 en linea: 10 rows, 10 cols, c == 7
-        // p=[2, 10, 15, 25, 40], q=[2, 10, 15, 25, 40], r=[2, 10, 15, 25, 40], s=[2, 10, 15, 25], t=[2, 10, 15, 25], m=[[1, 1, 1, 2, 2],[2, 2, 2, 3, 3],[3, 3, 3, 4, 4],[4, 4, 4, 5, 5],[5, 5, 5, 6, 6],[6, 6, 6, 7, 7],[6, 6, 6, 7, 7],[7, 7, 7, 8, 8],[8, 8, 8, 9, 9],[9, 9, 9, 10, 10]] 
-        // std::vector<int> parameters = {2, 10, 15, 25, 40, 2, 10, 15, 25, 40, 2, 10, 15, 25, 40, 2, 10, 15, 25, 2, 10, 15, 25, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10}; 
+        // // 4 en linea
+        // std::vector<int> p = {5, 15};
+        // std::vector<int> q = {3, 20, 50};
+        // std::vector<int> s = {10};
+        // std::vector<int> t = {5};
+        // std::vector<int> parameters = p;
+        // parameters.insert(parameters.end(), q.begin(), q.end());
+        // parameters.insert(parameters.end(), s.begin(), s.end());
+        // parameters.insert(parameters.end(), t.begin(), t.end());
       
         go_first = read_str();
         if (go_first == "vos") {
