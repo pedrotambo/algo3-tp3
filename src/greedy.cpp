@@ -526,8 +526,10 @@ int calculate_move_score(Game &g, char player, int movement, std::vector<int>& p
         score += ( number_of_possible_lines_of_length[i] * q[i] - rival_number_of_possible_lines_of_length[i] * t[i] );
     }
 
-    if(0 < rival_number_of_possible_lines_of_length[g.c]) score = -INFINITE;
-    if(number_of_lines_of_length[g.c]) score = INFINITE;
+    if(0 < rival_number_of_possible_lines_of_length[g.c]) 
+        score = rival_number_of_possible_lines_of_length[g.c] * -INFINITE;
+    if(number_of_lines_of_length[g.c]) 
+        score = INFINITE;
 
     undo_move(g, movement);
     return score;
