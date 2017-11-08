@@ -211,14 +211,6 @@ void mutation(std::vector<Individual> &population, float probabilty){
 /*****************************************************************************/
 /*****************************************************************************/
 
-char fight_vs_best_player(Game &g, std::vector<int>& mine_parameters, std::vector<int>& opponent_parameters){
-    while(not finished(g)){
-        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, mine_parameters) : greedy_move(g, opponent_parameters);
-        do_move(g, movement);
-    }
-    return winner(g);
-}
-
 char fight_vs_random_blocker(Game &g, std::vector<int>& parameters){
     while(not finished(g)){
         int movement = (g.current_player == PLAYER_1) ? greedy_move(g, parameters) : random_blocker_move(g);
@@ -235,7 +227,7 @@ char fight_vs_random(Game &g, std::vector<int>& parameters){
     return winner(g);
 }
 
-char fight_vs_random_individual_from_population(Game &g, std::vector<int>& mine_parameters, std::vector<int>& opponent_parameters){
+char fight_vs_individual_from_population(Game &g, std::vector<int>& mine_parameters, std::vector<int>& opponent_parameters){
     while(not finished(g)){
         int movement = (g.current_player == PLAYER_1) ? greedy_move(g, mine_parameters) : greedy_move(g, opponent_parameters);
         do_move(g, movement);
@@ -256,16 +248,16 @@ float fitness_score_vs_pool_of_players(Game &g, std::vector<Individual>& populat
     int games_played = 0;
     int games_won = 0;
 
-    // Vs best player
-    Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
-    int result = fight_vs_best_player(g_home, input_genome.genome, get_best_player(population).genome);
-    games_played++;
-    if(result == PLAYER_1) games_won++;
+    // // Vs best player
+    // Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+    // int result = fight_vs_individual_from_population(g_home, input_genome.genome, get_best_player(population).genome);
+    // games_played++;
+    // if(result == PLAYER_1) games_won++;
 
-    Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
-    games_played++;
-    result = fight_vs_best_player(g_away, input_genome.genome, get_best_player(population).genome);
-    if(result == PLAYER_1) games_won++;
+    // Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+    // games_played++;
+    // result = fight_vs_individual_from_population(g_away, input_genome.genome, get_best_player(population).genome);
+    // if(result == PLAYER_1) games_won++;
 
     // Vs random
     for(unsigned int i = 0; i < N_OF_GAMES_VS_RANDOM_PLAYERS; i++){
@@ -293,17 +285,30 @@ float fitness_score_vs_pool_of_players(Game &g, std::vector<Individual>& populat
         if(result == PLAYER_1) games_won++;
     }
 
-    // Vs random individuals from population: fight against 10% of the population
-    for(unsigned int i = 0; i < population.size() * 0.10 ; i++){
-        int r = rand() % population.size();
+    // // Vs random individuals from population: fight against 10% of the population
+    // for(unsigned int i = 0; i < population.size() * 0.10 ; i++){
+    //     int r = rand() % population.size();
+    //     Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+    //     int result = fight_vs_individual_from_population(g_home, input_genome.genome, population[r].genome);
+    //     games_played++;
+    //     if(result == PLAYER_1) games_won++;
+        
+    //     Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+    //     games_played++;
+    //     result = fight_vs_individual_from_population(g_away, input_genome.genome, population[r].genome);
+    //     if(result == PLAYER_1) games_won++;
+    // }
+
+    // Vs population
+    for(unsigned int i = 0; i < population.size(); i++){
         Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
-        int result = fight_vs_random_individual_from_population(g_home, input_genome.genome, population[r].genome);
+        int result = fight_vs_individual_from_population(g_home, input_genome.genome, population[i].genome);
         games_played++;
         if(result == PLAYER_1) games_won++;
         
         Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
         games_played++;
-        result = fight_vs_random_individual_from_population(g_away, input_genome.genome, population[r].genome);
+        result = fight_vs_individual_from_population(g_away, input_genome.genome, population[i].genome);
         if(result == PLAYER_1) games_won++;
     }
 

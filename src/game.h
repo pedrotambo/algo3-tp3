@@ -1,3 +1,6 @@
+#ifndef SRC_GAME_H
+#define SRC_GAME_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -60,3 +63,5 @@ void send(const std::string& msg);
 void send(int msg);
 int read_int();
 std::string read_str();
+
+#endif //SRC_GAME_H
