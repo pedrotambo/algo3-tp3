@@ -7,14 +7,6 @@
 #include <random>
 #include <assert.h>
 
-struct movement_score { 
-    int movement; 
-    int score; 
-    bool operator<(const movement_score& other){
-        return this->score < other.score;
-    }
-}; 
-
 struct line_info {
     int start;
     int finish;
@@ -26,8 +18,7 @@ struct line_info {
 };
 
 int greedy_move(Game &g, std::vector<int>& parameters);
-
 int random_max(std::vector<movement_score>& valid_movements);
-void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length, std::vector<int>& effective_lines_of_length, std::vector<int>& possible_lines_of_length);
+void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length, std::vector<int>& effective_lines_of_length, std::vector<int>& possible_lines_of_length, int& number_of_dual_effective_lines_of_c_minus_1, int& number_of_dual_effective_lines_of_c_minus_2);
 
 #endif //SRC_GREEDY_H

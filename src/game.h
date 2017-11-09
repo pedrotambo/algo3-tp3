@@ -64,4 +64,16 @@ void send(int msg);
 int read_int();
 std::string read_str();
 
+// Greedy and Minimax
+struct movement_score { 
+    int movement; 
+    int score; 
+    bool operator<(const movement_score& other){
+        return this->score < other.score;
+    }
+    bool operator>(const movement_score& other){
+        return this->score > other.score;
+    }
+}; 
+
 #endif //SRC_GAME_H

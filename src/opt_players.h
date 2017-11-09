@@ -3,17 +3,8 @@
 
 #include "game.h"
 
-struct Move{
-    Move(int v, int t): value(v), move(t) {}
-    Move(){
-        value = 0;
-        move = 0;
-    }
-    int value;
-    int move;    
-};
-
 int minimax_move(Game &g);
 int alfabeta_move(Game &g);
+int minimax_greedy_move(Game &g, std::vector<int>& parameters);
 
 #endif //SRC_OPT_PLAYERS_H

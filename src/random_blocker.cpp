@@ -6,14 +6,15 @@ int calculate_move_score(Game &g, char player, int movement){
     std::vector<int> number_of_lines_of_length;
     std::vector<int> number_of_effective_lines_of_length;
     std::vector<int> number_of_possible_lines_of_length;
+    int unused;
 
-    calculate_game_info(g, player, number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length);
+    calculate_game_info(g, player, number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length, unused, unused);
 
     std::vector<int> rival_number_of_lines_of_length;
     std::vector<int> rival_number_of_effective_lines_of_length;
     std::vector<int> rival_number_of_possible_lines_of_length;
 
-    calculate_game_info(g, next_player(player), rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length);
+    calculate_game_info(g, next_player(player), rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length, unused, unused);
 
     int score = 0;
 

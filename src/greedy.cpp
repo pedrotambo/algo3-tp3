@@ -56,7 +56,7 @@ int random_max(std::vector<movement_score>& valid_movements){
     return best[r % best.size()].movement;
 }
 
-int center_max(std::vector<movement_score>& valid_movements, int center){
+movement_score center_max(std::vector<movement_score>& valid_movements, int center){
     std::sort(valid_movements.rbegin(), valid_movements.rend());
     std::vector<movement_score> best;
     best.push_back(valid_movements[0]);
@@ -72,14 +72,16 @@ int center_max(std::vector<movement_score>& valid_movements, int center){
         }
     }
     
-    return min_vs_center.movement;
+    return min_vs_center;
 }
 
-void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length, std::vector<int>& effective_lines_of_length, std::vector<int>& possible_lines_of_length){
+void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length, std::vector<int>& effective_lines_of_length, std::vector<int>& possible_lines_of_length, int& number_of_dual_effective_lines_of_c_minus_1, int& number_of_dual_effective_lines_of_c_minus_2){
 
     lines_of_length = std::vector<int>(g.c + 1, 0);
     effective_lines_of_length = std::vector<int>(g.c + 1, 0);
     possible_lines_of_length = std::vector<int>(g.c + 1, 0);
+    number_of_dual_effective_lines_of_c_minus_1 = 0;
+    number_of_dual_effective_lines_of_c_minus_2 = 0;
 
     // Cuento lineas horizontales
     for (int i = 0; i < g.rows; i++) {
@@ -109,6 +111,27 @@ void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length
                 
             if(partial_count > 1 and ((j+1 < g.cols and g.board[i][j+1] == EMPTY) or (0 <= j-partial_count and g.board[i][j-partial_count] == EMPTY))){
                 effective_lines_of_length[partial_count]++;
+                if(partial_count == g.c-2){
+                    // es una linea efectiva de c-2, hay que fijarse se puede continuar por ambos lados y de alguno de los
+                    // tenga ademas otro espacio mas
+                    // y que obviamente que si tiro la ficha en esos espacios libres quede en esa posicion y no se vaya para abajo
+                    // o sea que tenga alguna ficha que la sostenga ahi
+                    if(
+                        ((j+2 < g.cols and g.board[i][j+1] == EMPTY and (i==0 or (g.board[i-1][j+1] != EMPTY)) and g.board[i][j+2] == EMPTY and (i==0 or (g.board[i-1][j+2] != EMPTY))) and (0 <= j-partial_count and g.board[i][j-partial_count] == EMPTY and (i==0 or (g.board[i-1][j-partial_count] != EMPTY))))
+                        or 
+                        ((j+1 < g.cols and g.board[i][j+1] == EMPTY and (i==0 or (g.board[i-1][j+1] != EMPTY))) and (0 <= j-partial_count-1 and g.board[i][j-partial_count] == EMPTY and (i==0 or (g.board[i-1][j-partial_count] != EMPTY)) and g.board[i][j-partial_count-1] == EMPTY and (i==0 or (g.board[i-1][j-partial_count-1] != EMPTY))))
+                    ){
+                        number_of_dual_effective_lines_of_c_minus_2++;
+                    }
+                }
+                if(partial_count == g.c-1){
+                    // es una linea efectiva de c-1, hay que fijarse se puede continuar por ambos lados
+                    // y que obviamente que si tiro la ficha en esos espacios libres quede en esa posicion y no se vaya para abajo
+                    // o sea que tenga alguna ficha que la sostenga ahi
+                    if((j+1 < g.cols and g.board[i][j+1] == EMPTY and (i==0 or (g.board[i-1][j+1] != EMPTY))) and (0 <= j-partial_count and g.board[i][j-partial_count] == EMPTY and (i==0 or (g.board[i-1][j-partial_count] != EMPTY)))){
+                        number_of_dual_effective_lines_of_c_minus_1++;
+                    }
+                }
             }
 
             if(partial_count == 1 and g.board[i][j] == player and ((j+1 < g.cols and g.board[i][j+1] == EMPTY) or (0 < j and g.board[i][j-1] == EMPTY))){
@@ -231,7 +254,26 @@ void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length
             partial_count = (partial_count > g.c)? g.c : partial_count;
 
             if(partial_count > 1) lines_of_length[partial_count]++;                
-            if(partial_count > 1 and ((i < g.rows-1 and down+i < g.cols-1 and g.board[i+1][i+down+1] == EMPTY) or (0 <= i-partial_count and 0 <= down+i-partial_count and g.board[i-partial_count][down+i-partial_count] == EMPTY))) effective_lines_of_length[partial_count]++;
+            if(partial_count > 1 and ((i < g.rows-1 and down+i < g.cols-1 and g.board[i+1][i+down+1] == EMPTY) or (0 <= i-partial_count and 0 <= down+i-partial_count and g.board[i-partial_count][down+i-partial_count] == EMPTY))){
+                effective_lines_of_length[partial_count]++;
+                if(partial_count == g.c-2){
+                    // es una linea efectiva de c-2, hay que fijarse se puede continuar por ambos lados y de alguno de los
+                    // tenga ademas otro espacio mas
+                    if(
+                        ((i < g.rows-2 and down+i < g.cols-2 and g.board[i+1][i+down+1] == EMPTY and g.board[i][i+down+1] != EMPTY and g.board[i+2][i+down+2] == EMPTY and g.board[i+1][i+down+2] != EMPTY) and (0 <= i-partial_count and 0 <= down+i-partial_count and g.board[i-partial_count][down+i-partial_count] == EMPTY and (i-partial_count == 0 or g.board[i-partial_count-1][down+i-partial_count] != EMPTY))) 
+                        or 
+                        ((i < g.rows-1 and down+i < g.cols-1 and g.board[i+1][i+down+1] == EMPTY and g.board[i][i+down+1] != EMPTY) and (0 <= i-partial_count-1 and 0 <= down+i-partial_count-1 and g.board[i-partial_count][down+i-partial_count] == EMPTY and g.board[i-partial_count-1][down+i-partial_count] != EMPTY and g.board[i-partial_count-1][down+i-partial_count-1] == EMPTY and (i-partial_count-1 == 0 or g.board[i-partial_count-2][down+i-partial_count-1] != EMPTY)))
+                    ){
+                        number_of_dual_effective_lines_of_c_minus_2++;
+                    }
+                }
+                if(partial_count == g.c-1){
+                    // es una linea efectiva de c-1, hay que fijarse se puede continuar por ambos lados
+                    if((i < g.rows-1 and down+i < g.cols-1 and g.board[i+1][i+down+1] == EMPTY and g.board[i][i+down+1] != EMPTY) and (0 <= i-partial_count and 0 <= down+i-partial_count and g.board[i-partial_count][down+i-partial_count] == EMPTY and (i-partial_count == 0 or g.board[i-partial_count-1][down+i-partial_count] != EMPTY))){
+                        number_of_dual_effective_lines_of_c_minus_1++;
+                    }
+                }
+            }
             if(g.board[li.start_i][li.start_j] == player) lines_in_row.push_back(li);
             i += 1;
         }
@@ -302,7 +344,26 @@ void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) lines_of_length[partial_count]++;
-            if(partial_count > 1 and ((i < g.cols-1 and up+i < g.rows-1 and g.board[i+up+1][i+1] == EMPTY) or (0 <= i+up-partial_count and 0 <= i-partial_count and g.board[i+up-partial_count][i-partial_count] == EMPTY))) effective_lines_of_length[partial_count]++;
+            if(partial_count > 1 and ((i < g.cols-1 and up+i < g.rows-1 and g.board[i+up+1][i+1] == EMPTY) or (0 <= i+up-partial_count and 0 <= i-partial_count and g.board[i+up-partial_count][i-partial_count] == EMPTY))){
+                effective_lines_of_length[partial_count]++;
+                if(partial_count == g.c-2){
+                    // es una linea efectiva de c-2, hay que fijarse se puede continuar por ambos lados y de alguno de los
+                    // tenga ademas otro espacio mas
+                    if(
+                        ((i < g.cols-2 and up+i < g.rows-2 and g.board[i+up+1][i+1] == EMPTY and g.board[i+up][i+1] != EMPTY and g.board[i+up+2][i+2] == EMPTY and g.board[i+up+1][i+2] != EMPTY) and (0 <= i+up-partial_count and 0 <= i-partial_count and g.board[i+up-partial_count][i-partial_count] == EMPTY and (i+up-partial_count==0 or g.board[i+up-partial_count-1][i-partial_count] != EMPTY)))
+                        or 
+                        ((i < g.cols-1 and up+i < g.rows-1 and g.board[i+up+1][i+1] == EMPTY and g.board[i+up][i+1] != EMPTY) and (0 <= i+up-partial_count-1 and 0 <= i-partial_count-1 and g.board[i+up-partial_count][i-partial_count] == EMPTY and g.board[i+up-partial_count-1][i-partial_count] != EMPTY and g.board[i+up-partial_count-1][i-partial_count-1] == EMPTY and (i+up-partial_count-1==0 or g.board[i+up-partial_count-2][i-partial_count-1] != EMPTY)))
+                    ){
+                        number_of_dual_effective_lines_of_c_minus_2++;
+                    }
+                }
+                if(partial_count == g.c-1){
+                    // es una linea efectiva de c-1, hay que fijarse se puede continuar por ambos lados
+                    if((i < g.cols-1 and up+i < g.rows-1 and g.board[i+up+1][i+1] == EMPTY and g.board[i+up][i+1] != EMPTY) and (0 <= i+up-partial_count and 0 <= i-partial_count and g.board[i+up-partial_count][i-partial_count] == EMPTY and (i+up-partial_count == 0 or g.board[i+up-partial_count-1][i-partial_count] != EMPTY))){
+                        number_of_dual_effective_lines_of_c_minus_1++;
+                    }
+                }
+            }
             if(g.board[li.start_i][li.start_j] == player) lines_in_row.push_back(li);
             i += 1;
         }
@@ -377,7 +438,26 @@ void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) lines_of_length[partial_count]++;
-            if(partial_count > 1 and ((0 < i and up+j < g.cols-1 and g.board[i-1][up+1+j] == EMPTY) or (i+partial_count < g.rows and 0 <= up+j-partial_count and g.board[i+partial_count][up+j-partial_count] == EMPTY))) effective_lines_of_length[partial_count]++;
+            if(partial_count > 1 and ((0 < i and up+j < g.cols-1 and g.board[i-1][up+1+j] == EMPTY) or (i+partial_count < g.rows and 0 <= up+j-partial_count and g.board[i+partial_count][up+j-partial_count] == EMPTY))){
+                effective_lines_of_length[partial_count]++;
+                if(partial_count == g.c-2){
+                    // es una linea efectiva de c-2, hay que fijarse se puede continuar por ambos lados y de alguno de los
+                    // tenga ademas otro espacio mas
+                    if(
+                        ((0 < i-1 and up+j < g.cols-2 and g.board[i-1][up+1+j] == EMPTY and g.board[i-2][up+1+j] != EMPTY and g.board[i-2][up+2+j] == EMPTY and (i-2==0 or g.board[i-3][up+2+j] != EMPTY)) and (i+partial_count < g.rows and 0 <= up+j-partial_count and g.board[i+partial_count][up+j-partial_count] == EMPTY and g.board[i+partial_count-1][up+j-partial_count] != EMPTY))
+                        or 
+                        ((0 < i and up+j < g.cols-1 and g.board[i-1][up+1+j] == EMPTY and (i-1==0 or g.board[i-2][up+1+j] != EMPTY)) and (i+partial_count+1 < g.rows and 0 <= up+j-partial_count-1 and g.board[i+partial_count][up+j-partial_count] == EMPTY and g.board[i+partial_count-1][up+j-partial_count] != EMPTY and g.board[i+partial_count+1][up+j-partial_count-1] == EMPTY and g.board[i+partial_count][up+j-partial_count-1] != EMPTY))
+                    ){
+                        number_of_dual_effective_lines_of_c_minus_2++;
+                    }
+                }
+                if(partial_count == g.c-1){
+                    // es una linea efectiva de c-1, hay que fijarse se puede continuar por ambos lados
+                    if((0 < i and up+j < g.cols-1 and g.board[i-1][up+1+j] == EMPTY and (i-1==0 or g.board[i-2][up+1+j] != EMPTY)) and (i+partial_count < g.rows and 0 <= up+j-partial_count and g.board[i+partial_count][up+j-partial_count] == EMPTY and g.board[i+partial_count-1][up+j-partial_count] != EMPTY)){
+                        number_of_dual_effective_lines_of_c_minus_1++;
+                    }
+                }
+            }
             if(g.board[li.start_i][li.start_j] == player) lines_in_row.push_back(li);
             i -= 1;
             j += 1;
@@ -451,7 +531,26 @@ void calculate_game_info(Game &g, char player, std::vector<int>& lines_of_length
             }
             partial_count = (partial_count > g.c)? g.c : partial_count;
             if(partial_count > 1) lines_of_length[partial_count]++;
-            if(partial_count > 1 and ((0 < i-down and j < g.cols-1 and g.board[i-down-1][j+1] == EMPTY) or (i-down+partial_count < g.rows and 0 <= j-partial_count and g.board[i-down+partial_count][j-partial_count] == EMPTY))) effective_lines_of_length[partial_count]++;
+            if(partial_count > 1 and ((0 < i-down and j < g.cols-1 and g.board[i-down-1][j+1] == EMPTY) or (i-down+partial_count < g.rows and 0 <= j-partial_count and g.board[i-down+partial_count][j-partial_count] == EMPTY))){
+                effective_lines_of_length[partial_count]++;
+                if(partial_count == g.c-2){
+                    // es una linea efectiva de c-2, hay que fijarse se puede continuar por ambos lados y de alguno de los
+                    // tenga ademas otro espacio mas
+                    if(
+                        ((0 < i-down-1 and j < g.cols-2 and g.board[i-down-1][j+1] == EMPTY and g.board[i-down-2][j+1] != EMPTY and g.board[i-down-2][j+2] == EMPTY and (i-down-2 == 0 or g.board[i-down-3][j+2] != EMPTY)) and (i-down+partial_count < g.rows and 0 <= j-partial_count and g.board[i-down+partial_count][j-partial_count] == EMPTY and g.board[i-down+partial_count-1][j-partial_count] != EMPTY)) 
+                        or 
+                        ((0 < i-down and j < g.cols-1 and g.board[i-down-1][j+1] == EMPTY and (i-down-1==0 or g.board[i-down-2][j+1] != EMPTY)) and (i-down+partial_count+1 < g.rows and 0 <= j-partial_count-1 and g.board[i-down+partial_count][j-partial_count] == EMPTY and g.board[i-down+partial_count-1][j-partial_count] != EMPTY and g.board[i-down+partial_count+1][j-partial_count-1] == EMPTY and g.board[i-down+partial_count][j-partial_count-1] != EMPTY))
+                    ){
+                        number_of_dual_effective_lines_of_c_minus_2++;
+                    }
+                }
+                if(partial_count == g.c-1){
+                    // es una linea efectiva de c-1, hay que fijarse se puede continuar por ambos lados
+                    if((0 < i-down and j < g.cols-1 and g.board[i-down-1][j+1] == EMPTY and (i-down-1==0 or g.board[i-down-2][j+1] != EMPTY)) and (i-down+partial_count < g.rows and 0 <= j-partial_count and g.board[i-down+partial_count][j-partial_count] == EMPTY and g.board[i-down+partial_count-1][j-partial_count] != EMPTY)){
+                        number_of_dual_effective_lines_of_c_minus_1++;
+                    }
+                }
+            }
             if(g.board[li.start_i][li.start_j] == player) lines_in_row.push_back(li);
             i -= 1;
             j += 1;
@@ -510,14 +609,18 @@ int calculate_move_score(Game &g, char player, int movement, std::vector<int>& p
     std::vector<int> number_of_lines_of_length;
     std::vector<int> number_of_effective_lines_of_length;
     std::vector<int> number_of_possible_lines_of_length;
+    int number_of_dual_effective_lines_of_c_minus_1;
+    int number_of_dual_effective_lines_of_c_minus_2;
 
-    calculate_game_info(g, player, number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length);
+    calculate_game_info(g, player, number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length, number_of_dual_effective_lines_of_c_minus_1, number_of_dual_effective_lines_of_c_minus_2);
 
     std::vector<int> rival_number_of_lines_of_length;
     std::vector<int> rival_number_of_effective_lines_of_length;
     std::vector<int> rival_number_of_possible_lines_of_length;
+    int rival_number_of_dual_effective_lines_of_c_minus_1;
+    int rival_number_of_dual_effective_lines_of_c_minus_2;
 
-    calculate_game_info(g, next_player(player), rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length);
+    calculate_game_info(g, next_player(player), rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length, rival_number_of_dual_effective_lines_of_c_minus_1, rival_number_of_dual_effective_lines_of_c_minus_2);
 
     int score = 0;
 
@@ -526,8 +629,19 @@ int calculate_move_score(Game &g, char player, int movement, std::vector<int>& p
         score += ( number_of_possible_lines_of_length[i] * q[i] - rival_number_of_possible_lines_of_length[i] * t[i] );
     }
 
+    // Es muy importante el orden de los ifs
+    if(0 < number_of_dual_effective_lines_of_c_minus_2)
+        score = INFINITE/3;
+
+    if(0 < rival_number_of_dual_effective_lines_of_c_minus_2)
+        score = -INFINITE/3;
+
+    if(0 < number_of_dual_effective_lines_of_c_minus_1)
+        score = INFINITE/2;
+
     if(0 < rival_number_of_possible_lines_of_length[g.c]) 
         score = rival_number_of_possible_lines_of_length[g.c] * -INFINITE;
+
     if(number_of_lines_of_length[g.c]) 
         score = INFINITE;
 
@@ -553,22 +667,26 @@ int greedy_move(Game &g, std::vector<int>& parameters) {
         }
     }
 
-    return center_max(valid_movements, g.cols/2);
+    return center_max(valid_movements, g.cols/2).movement;
 
     // // DEBUG LINES
-    // int mov = center_max(valid_movements, g.cols/2);
+    // int mov = center_max(valid_movements, g.cols/2).movement;
     // do_move(g, mov);
     // std::vector<int> number_of_lines_of_length;
     // std::vector<int> number_of_effective_lines_of_length;
     // std::vector<int> number_of_possible_lines_of_length;
+    // int number_of_dual_effective_lines_of_c_minus_1;
+    // int number_of_dual_effective_lines_of_c_minus_2;
 
-    // calculate_game_info(g, next_player(g.current_player), number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length);
+    // calculate_game_info(g, next_player(g.current_player), number_of_lines_of_length, number_of_effective_lines_of_length, number_of_possible_lines_of_length, number_of_dual_effective_lines_of_c_minus_1, number_of_dual_effective_lines_of_c_minus_2);
 
     // std::vector<int> rival_number_of_lines_of_length;
     // std::vector<int> rival_number_of_effective_lines_of_length;
     // std::vector<int> rival_number_of_possible_lines_of_length;
+    // int rival_number_of_dual_effective_lines_of_c_minus_1;
+    // int rival_number_of_dual_effective_lines_of_c_minus_2;
 
-    // calculate_game_info(g, g.current_player, rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length);
+    // calculate_game_info(g, g.current_player, rival_number_of_lines_of_length, rival_number_of_effective_lines_of_length, rival_number_of_possible_lines_of_length, rival_number_of_dual_effective_lines_of_c_minus_1, rival_number_of_dual_effective_lines_of_c_minus_2);
 
     // std::cerr << "number_of_lines_of_length" << std::endl;    
     // for(int i = 0; i < number_of_lines_of_length.size(); ++i){
@@ -599,6 +717,15 @@ int greedy_move(Game &g, std::vector<int>& parameters) {
     //     std::cerr << rival_number_of_possible_lines_of_length[i] << " ";
     // }
     // std::cerr << std::endl;
+
+    // std::cerr << "number_of_dual_effective_lines_of_c_minus_1" << std::endl;
+    // std::cerr << number_of_dual_effective_lines_of_c_minus_1 << std::endl;
+    // std::cerr << "number_of_dual_effective_lines_of_c_minus_2" << std::endl;
+    // std::cerr << number_of_dual_effective_lines_of_c_minus_2 << std::endl;
+    // std::cerr << "rival_number_of_dual_effective_lines_of_c_minus_1" << std::endl;
+    // std::cerr << rival_number_of_dual_effective_lines_of_c_minus_1 << std::endl;
+    // std::cerr << "rival_number_of_dual_effective_lines_of_c_minus_2" << std::endl;
+    // std::cerr << rival_number_of_dual_effective_lines_of_c_minus_2 << std::endl;
 
     // undo_move(g, mov);
     // return mov;
