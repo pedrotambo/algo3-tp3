@@ -6,14 +6,14 @@
 #include <vector>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <algorithm> // std::max
+#include <algorithm>  // std::max
 
 #define PLAYER_1 '1'
 #define PLAYER_2 '2'
 #define EMPTY '-'
 #define INFINITE 1000
 
-//#define DEBUG
+// #define DEBUG
 
 void send(const std::string& msg) {
     std::cout << msg << std::endl;
@@ -115,7 +115,7 @@ bool finished(Game &g){
     int cols = g.board[0].size();
     char player = g.board[last_row][last_col];
 
-  	// voy por la horizontal (izquierda y derecha)
+    // voy por la horizontal (izquierda y derecha)
     // ------------  Esta direccion: ---  ---------
     int lim_left = std::max(0,last_col - c + 1);
     int cant = 1; // cuento la ficha puesta
@@ -253,7 +253,7 @@ void min_move(Move& m1, Move m2, int move){
 }
 
 
-Move optimal_move(Game &g, char player){
+Move optimal_move(Game &g, char player, int alfa, int beta){
     int cols, last_col, h, last_row;
     set_arguments(g, cols, last_col, h, last_row);
 
@@ -274,20 +274,43 @@ Move optimal_move(Game &g, char player){
     // si llego aca, nadie ganó ni empató aun
     res.value = (player == PLAYER_1)? -INFINITE:INFINITE;
 
-    for(int move = 0; move < cols; move++){
-        if (possible_move(g, move)){
-            if(player == PLAYER_1) {
-                // Soy el player 1
+    /* alfa-beta pruning:
+     *   - alfa y beta: no son globales, son la mejor opción desde la raíz hasta nuestro estado actual.
+     *       alfa es la mejor opción para el maximizador, beta es la mejor opción para el minimizador.
+     *   - Cuándo: A la primer ocurrencia de conseguir algo mejor respecto a lo mejor que pudo conseguir nuestro rival.
+     *   - Razón : El rival va preferir esta primer ocurrencia respecto a otras opciones disponibles que podrían ser mejores. 
+     */
+    if (player == PLAYER_1) {
+        for (int move = 0; move < cols; move++) {
+            if (possible_move(g, move)) {
                 update_game(g, PLAYER_1, move);
-                Move m = optimal_move(g, PLAYER_2);
-                max_move(res, m, move);
+                Move m = optimal_move(g, PLAYER_2, alfa, beta);
                 outdate_game(g, PLAYER_1, move);
-            } else {
+
+                max_move(res, m, move);
+                alfa = std::max(alfa, res.value);
+
+                if (beta <= alfa) {  // Poda beta
+                    res.value = alfa;
+                    break;
+                }
+            }
+        }
+    } else {
+        for (int move = 0; move < cols; move++) {
+            if (possible_move(g, move)) {
                 // Es el player 2, oponente
                 update_game(g, PLAYER_2, move);
-                Move m = optimal_move(g, PLAYER_1);
-                min_move(res, m, move);
+                Move m = optimal_move(g, PLAYER_1, alfa, beta);
                 outdate_game(g, PLAYER_2, move);
+
+                min_move(res, m, move);
+                beta = std::min(beta, res.value);
+
+                if (beta <= alfa) {  // Poda alfa
+                    res.value = beta;
+                    break;
+                }
             }
         }
     }
@@ -315,7 +338,7 @@ Move optimal_move(Game &g, char player){
 
 
 bool valid_move(Game &g, int move){
-	return possible_move(g, move) and move < (int)g.board[0].size() and move >= 0;
+    return possible_move(g, move) and move < (int)g.board[0].size() and move >= 0;
 }
 
 int main() {
@@ -337,7 +360,7 @@ int main() {
         
         go_first = read_str();
         if (go_first == "vos") {
-            Move m = optimal_move(g, PLAYER_1);
+            Move m = optimal_move(g, PLAYER_1, -INFINITE, INFINITE);
             move = m.move;
             update_game(g, PLAYER_1, move);
             send(move);
@@ -354,29 +377,29 @@ int main() {
             int opponent_move = std::stoi(msg);
             
             #ifdef DEBUG
-            	while(not valid_move(g, opponent_move)){
-            	    std::cout << "Please, insert valid move: " << std::endl;
-            	    msg = read_str();
-            	    opponent_move = std::stoi(msg);
-            	}
+                while(not valid_move(g, opponent_move)){
+                    std::cout << "Please, insert valid move: " << std::endl;
+                    msg = read_str();
+                    opponent_move = std::stoi(msg);
+                }
             #endif
 
             update_game(g, PLAYER_2, opponent_move);
             
             #ifdef DEBUG
-            	show_board(g.board);
-            	if(finished(g)){std::cout << "El juego terminó." << std::endl;return 0;}
+                show_board(g.board);
+                if(finished(g)){std::cout << "El juego terminó." << std::endl;return 0;}
             #endif
             
             // calculo la jugada optima
-            move = optimal_move(g, PLAYER_1).move;
+            move = optimal_move(g, PLAYER_1, -INFINITE, INFINITE).move;
 
             // Actualizo el tablero con mi jugada
             update_game(g, PLAYER_1, move);
 
             #ifdef DEBUG
-            	show_board(g.board);
-            	if(finished(g)){std::cout << "El juego terminó." << std::endl;return 0;}
+                show_board(g.board);
+                if(finished(g)){std::cout << "El juego terminó." << std::endl;return 0;}
             #endif
 
             send(move);
@@ -385,5 +408,3 @@ int main() {
 
     return 0;
 }
-
-
