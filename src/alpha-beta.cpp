@@ -392,7 +392,10 @@ int main() {
             #endif
             
             // calculo la jugada optima
-            move = optimal_move(g, PLAYER_1, -INFINITE, INFINITE).move;
+            Move m = optimal_move(g, PLAYER_1, -INFINITE, INFINITE);
+            move = m.move;
+
+            std::cerr << m.value << std::endl;
 
             // Actualizo el tablero con mi jugada
             update_game(g, PLAYER_1, move);

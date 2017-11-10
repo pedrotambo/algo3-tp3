@@ -23,13 +23,25 @@ movement_score min(std::vector<movement_score>& movements){
     return res;
 }
 
-// NO ANDA
+void update_max(movement_score& m, movement_score& other){
+    if(m.score < other.score){
+        m.score = other.score;
+        m.movement = other.movement;
+    }
+}
+
+void update_min(movement_score& m, movement_score& other){
+    if(m.score > other.score){
+        m.score = other.score;
+        m.movement = other.movement;
+    }
+}
+
 movement_score minimax_optimal_move(Game &g, char player){
     if(finished(g)){
         movement_score ms;
-        ms.movement = g.last_move;
-        if(winner(g) == player) ms.score = INFINITE;
-        else if(winner(g) == next_player(player)) ms.score = -INFINITE;
+        if(winner(g) == player) ms.score = 10;
+        else if(winner(g) == next_player(player)) ms.score = -10;
         else if(winner(g) == TIED) ms.score = 0;
         return ms; 
     }
@@ -41,7 +53,7 @@ movement_score minimax_optimal_move(Game &g, char player){
         if(valid_move(g, move)){
             do_move(g, move);
             movement_score ms = minimax_optimal_move(g, player);
-            // ms.movement = move;
+            ms.movement = move;
             res.push_back(ms);
             undo_move(g, move);
         }
@@ -49,13 +61,61 @@ movement_score minimax_optimal_move(Game &g, char player){
     return (g.current_player == player)? max(res) : min(res);
 }
 
-// NO ANDA
-movement_score alfabeta_optimal_move(Game &g, char player){
-    // FIXME!
+movement_score alfabeta_optimal_move(Game &g, char player, int alfa, int beta){
+    /* alfa-beta pruning:
+     *   - alfa y beta: no son globales, son la mejor opción desde la raíz hasta nuestro estado actual.
+     *       alfa es la mejor opción para el maximizador, beta es la mejor opción para el minimizador.
+     *   - Cuándo: A la primer ocurrencia de conseguir algo mejor respecto a lo mejor que pudo conseguir nuestro rival.
+     *   - Razón : El rival va preferir esta primer ocurrencia respecto a otras opciones disponibles que podrían ser mejores. 
+     */
+
+    if(finished(g)){
+        movement_score ms;
+        if(winner(g) == player) ms.score = 10;
+        else if(winner(g) == next_player(player)) ms.score = -10;
+        else if(winner(g) == TIED) ms.score = 0;
+        return ms; 
+    }
+
     movement_score res;
-    int i = 0;
-    while(not valid_move(g, i)) i++;
-    res.movement = i;
+    if(g.current_player == player){
+        res.score = -INFINITE;
+        for(int move = 0; move < g.cols; move++){
+            if(valid_move(g, move)){
+                do_move(g, move);
+                movement_score ms = alfabeta_optimal_move(g, player, alfa, beta);
+                ms.movement = move;
+                undo_move(g, move);
+
+                update_max(res, ms);
+                alfa = std::max(alfa, res.score);
+
+                if(beta <= alfa){  // Poda beta
+                    res.score = alfa;
+                    break;
+                }
+            }
+        }
+    } else {
+        res.score = INFINITE;
+        for(int move = 0; move < g.cols; move++){
+            if(valid_move(g, move)){
+                do_move(g, move);
+                movement_score ms = alfabeta_optimal_move(g, player, alfa, beta);
+                ms.movement = move;
+                undo_move(g, move);
+
+                update_min(res, ms);
+                beta = std::min(beta, res.score);
+
+                if(beta <= alfa){  // Poda alfa
+                    res.score = beta;
+                    break;
+                }
+            }
+        }
+    }
+
     return res;
 }
 
@@ -63,7 +123,6 @@ movement_score alfabeta_optimal_move(Game &g, char player){
 movement_score minimax_greedy_optimal_move(Game &g, char player, int depth, std::vector<int>& parameters){
     if(finished(g)){
         movement_score ms;
-        ms.movement = g.last_move;
         if(winner(g) == player) ms.score = INFINITE;
         else if(winner(g) == next_player(player)) ms.score = -INFINITE;
         else if(winner(g) == TIED) ms.score = 0;
@@ -84,7 +143,7 @@ movement_score minimax_greedy_optimal_move(Game &g, char player, int depth, std:
         if(valid_move(g, move)){
             do_move(g, move);
             movement_score ms = minimax_greedy_optimal_move(g, player, depth+1, parameters);
-            // ms.movement = move;
+            ms.movement = move;
             res.push_back(ms);
             undo_move(g, move);
         }
@@ -95,11 +154,13 @@ movement_score minimax_greedy_optimal_move(Game &g, char player, int depth, std:
 
 // Wrappers
 int minimax_move(Game &g){
-    return minimax_optimal_move(g, g.current_player).movement;  
+    return minimax_optimal_move(g, g.current_player).movement;
 }
 
 int alfabeta_move(Game &g){
-    return alfabeta_optimal_move(g, g.current_player).movement;  
+    movement_score ms = alfabeta_optimal_move(g, g.current_player, -INFINITE, INFINITE);
+    std::cerr << ms.movement << " | " << ms.score << std::endl;
+    return ms.movement;  
 }
 
 int minimax_greedy_move(Game &g, std::vector<int>& parameters){

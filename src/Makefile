@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -c -g -Wall -std=c++11
 
-all: minimax random_player random_blocker_player alpha-beta greedy_player genetic grid exp_arena minimax_greedy_player
+all: minimax random_player random_blocker_player alpha-beta greedy_player genetic grid exp_arena minimax_greedy_player minimax_player alfabeta_player
 
 
 minimax: minimax.o
@@ -70,6 +70,18 @@ minimax_greedy_player: minimax_greedy_player.o game.o greedy.o opt_players.o
 minimax_greedy_player.o: minimax_greedy_player.cpp
 	$(CC) $(CFLAGS) minimax_greedy_player.cpp
 
+minimax_player: minimax_player.o game.o greedy.o opt_players.o
+	$(CC) minimax_player.o opt_players.o game.o greedy.o -o minimax_player
+
+minimax_player.o: minimax_player.cpp
+	$(CC) $(CFLAGS) minimax_player.cpp
+
+alfabeta_player: alfabeta_player.o game.o greedy.o opt_players.o
+	$(CC) alfabeta_player.o opt_players.o game.o greedy.o -o alfabeta_player
+
+alfabeta_player.o: alfabeta_player.cpp
+	$(CC) $(CFLAGS) alfabeta_player.cpp
+
 
 clean:
 	rm -f *.o
@@ -82,3 +94,5 @@ clean:
 	rm -f grid
 	rm -f exp_arena
 	rm -f minimax_greedy_player
+	rm -f minimax_player
+	rm -f alfabeta_player
