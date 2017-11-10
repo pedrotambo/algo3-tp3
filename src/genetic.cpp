@@ -72,7 +72,7 @@ float fitness_score_alternative(Game &g, Individual &input_genome, std::vector<I
 
     // Itero sobre cada genoma rival, y juego dos partidas para cada uno, una donde arranca el input_genome, y otro
     // donde arranca el rival
-    int games_played = enemies_genomes.size() * 2;
+    // int games_played = enemies_genomes.size() * 2;
     //int games_lost = 0;
     float score = 0;
     for (unsigned int i = 0; i < enemies_genomes.size(); i++) {

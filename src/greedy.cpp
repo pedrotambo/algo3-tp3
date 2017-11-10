@@ -6,7 +6,7 @@
 // rival weights of possible lines length                               --> t       size == c-3
 // parameters.size() == (c-1) + (c-2) + 2*(c-3)
 void assign_parameters(int c, std::vector<int>& parameters, std::vector<int>& p, std::vector<int>& q, std::vector<int>& s, std::vector<int>& t){
-    assert(parameters.size() == (c-2) + (c-1) + (c-3)*2);
+    assert((int)parameters.size() == (c-2) + (c-1) + (c-3)*2);
 
     int global_index = 0;
     p.push_back(0); // peso para el indice 0, asi despues indexamos tranquilos

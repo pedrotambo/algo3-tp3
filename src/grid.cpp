@@ -22,7 +22,7 @@ int evaluate_parameters(Game &g, std::vector<int>& input_genome, std::vector< st
 //    std::cout << std::endl;
 
     int games_not_lost = 120;
-    for (int i = 0; i < validation_set.size(); i ++) {
+    for (int i = 0; i < (int)validation_set.size(); i ++) {
         Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
 
         int result = fight(g_home, input_genome, validation_set[i]);
