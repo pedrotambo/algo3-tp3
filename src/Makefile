@@ -53,7 +53,7 @@ grid.o: grid.cpp
 	$(CC) $(CFLAGS) grid.cpp
 
 grid: grid.o
-	$(CC) grid.o game.o greedy.o -o grid
+	$(CC) grid.o game.o greedy.o random_blocker.o -o grid
 
 exp_arena: exp_arena.o game.o greedy.o random_blocker.o opt_players.o
 	$(CC) exp_arena.o random_blocker.o game.o greedy.o opt_players.o -o exp_arena

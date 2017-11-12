@@ -1,4 +1,5 @@
 #include "greedy.h"
+#include "random_blocker.h"
 
 std::random_device rd;
 std::mt19937 generator(rd());
@@ -13,6 +14,15 @@ char fight(Game &g, std::vector<int>& input_genome, std::vector<int>& rival_geno
     return winner(g);
 }
 
+char fight_greedy_vs_random_blocker(Game &g, std::vector<int>& parameters){
+    while(not finished(g)){
+        int movement = (g.current_player == PLAYER_1) ? greedy_move(g, parameters) : random_blocker_move(g);
+        do_move(g, movement);
+    }
+    return winner(g);
+}
+
+
 // Devuelve la cantidad de partidas no perdidas del input
 int evaluate_parameters(Game &g, std::vector<int>& input_genome, std::vector< std::vector<int> >& validation_set) {
 //    std::cout << "Por evaluar: " << std::endl;
@@ -21,23 +31,35 @@ int evaluate_parameters(Game &g, std::vector<int>& input_genome, std::vector< st
 //    }
 //    std::cout << std::endl;
 
-    int games_not_lost = 120;
+    int games_won = 0;
     for (int i = 0; i < (int)validation_set.size(); i ++) {
         Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
 
         int result = fight(g_home, input_genome, validation_set[i]);
 
-        if (result == PLAYER_2)
-            games_not_lost--;
+        if (result == PLAYER_1)
+            games_won++;
 
         Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
         result = fight(g_away, input_genome, validation_set[i]);
 
-        if (result == PLAYER_2)
-            games_not_lost--;
+        if (result == PLAYER_1)
+            games_won++;
     }
 
-    return games_not_lost;
+    int iterations_against_blocker = 100;
+    for (int i = 0; i < iterations_against_blocker; i++) {
+        Game g_home(g.rows, g.cols, g.c, g.max_p, PLAYER_1);
+        int result = fight_greedy_vs_random_blocker(g_home, input_genome);
+
+        if(result == PLAYER_1) games_won++;
+
+        Game g_away(g.rows, g.cols, g.c, g.max_p, PLAYER_2);
+        result = fight_greedy_vs_random_blocker(g_away, input_genome);
+        if(result == PLAYER_1) games_won++;
+    }
+
+    return games_won;
 }
 
 void find_parameters(std::vector<int> &parameters, std::vector< std::vector<int> > &validation_set, Game &g, int length, int start_at) {
@@ -77,7 +99,7 @@ void find_parameters(std::vector<int> &parameters, std::vector< std::vector<int>
 
 int main() {
     // Juego base
-    Game g(6, 7, 4, 42, PLAYER_1);
+    Game g(15, 15, 5, 225, PLAYER_1);
 
     // TODO: modificar si se remueven o agregan parametros
     int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
@@ -105,14 +127,14 @@ int main() {
         parameters[l] = random_weight(generator);
     }
 
-    std::cout << "Determinando parametros 0 y 1 (p)" << std::endl;
+    std::cout << "Determinando parametros 0, 1 y 2 (p)" << std::endl;
     find_parameters(parameters, validation_set, g, g.c - 2, 0);
-    std::cout << "Determinando parametros 2, 3 y 4 (q)" << std::endl;
-    find_parameters(parameters, validation_set, g, g.c - 1, 2);
-    std::cout << "Determinando parametro 5 (s)" << std::endl;
-    find_parameters(parameters, validation_set, g, g.c - 3, 5);
-    std::cout << "Determinando parametro 6 (t)" << std::endl;
-    find_parameters(parameters, validation_set, g, g.c - 3, 6);
+    std::cout << "Determinando parametros 3, 4, 5 y 6 (q)" << std::endl;
+    find_parameters(parameters, validation_set, g, g.c - 1, 3);
+    std::cout << "Determinando parametro 7 y 8 (s)" << std::endl;
+    find_parameters(parameters, validation_set, g, g.c - 3, 7);
+    std::cout << "Determinando parametro 8 y 9 (t)" << std::endl;
+    find_parameters(parameters, validation_set, g, g.c - 3, 9);
 
 
     std::cout << "El mejor arreglo es: ";
