@@ -25,11 +25,11 @@ char fight_greedy_vs_random_blocker(Game &g, std::vector<int>& parameters){
 
 // Devuelve la cantidad de partidas no perdidas del input
 int evaluate_parameters(Game &g, std::vector<int>& input_genome, std::vector< std::vector<int> >& validation_set) {
-    std::cout << "Por evaluar: " << std::endl;
-    for(unsigned int j = 0; j < input_genome.size(); j++){
-        std::cout << input_genome[j] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "Por evaluar: " << std::endl;
+//    for(unsigned int j = 0; j < input_genome.size(); j++){
+//        std::cout << input_genome[j] << " ";
+//    }
+//    std::cout << std::endl;
 
     int games_won = 0;
 //    for (int i = 0; i < (int)validation_set.size(); i ++) {
@@ -87,7 +87,7 @@ void find_parameters(std::vector<int> &parameters, std::vector< std::vector<int>
                 best_results[j - start_at] = parameters[j];
             }
         }
-        std::cout << i << " de " << std::pow(10, length) << std::endl;
+//        std::cout << i << " de " << std::pow(10, length) << std::endl;
     }
 
     // Fijo los conseguidos y voy por el próximo segmento
@@ -101,6 +101,7 @@ void find_parameters(std::vector<int> &parameters, std::vector< std::vector<int>
 int main() {
     // Juego base
     Game g(15, 15, 5, 225, PLAYER_1);
+//    Game g(7, 6, 4, 42, PLAYER_1);
 
     // TODO: modificar si se remueven o agregan parametros
     int parameters_lenght = (g.c-2) + (g.c-1) + (g.c-3)*2;
@@ -137,8 +138,8 @@ int main() {
 //    std::cout << "Determinando parametro 8 y 9 (t)" << std::endl;
 //    find_parameters(parameters, validation_set, g, g.c - 3, 9);
 
-
-    // villero as fuck
+    // En lugar de iterar por segmentos, itera de 2 en 2 (por performance)
+    // refactorear este código horrible
     find_parameters(parameters, validation_set, g, 2, 0);
     find_parameters(parameters, validation_set, g, 2, 2);
     find_parameters(parameters, validation_set, g, 2, 4);
